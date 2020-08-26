@@ -2,7 +2,7 @@
 
 session_start();
 
-if ($_SESSION['image_is_logged_in']) 
+if ($_SESSION['image_is_logged_in'])
 {
 
 $user = $_SESSION['user'];
@@ -18,7 +18,7 @@ $gdata=date('d-m-Y',strtotime('$gbd_data'));
 
 <html lang="es">
 	<head>
-		<?php include 'head.php'; ?>				
+		<?php include 'head.php'; ?>
 		<title>aplicoop - generación factura</title>
 	</head>
 
@@ -52,24 +52,24 @@ FROM comanda
 WHERE proces='$gproces' AND grup='$ggrup' AND data='$gbd_data'
 ORDER BY numero";
 
-$result = mysql_query($taula);
-if (!$result) {die('Invalid query: ' . mysql_error());}
+$result = mysqli_query($conn,$taula);
+if (!$result) {die('Invalid query: ' . mysqli_error($conn));}
 
-while (list($numero,$familia,$check0)=mysql_fetch_row($result))
+while (list($numero,$familia,$check0)=mysqli_fetch_row($result))
 {
 	$taula2 = "SELECT SUM(quantitat), SUM(cistella), SUM(cistella*preu*(1-descompte)*(1+iva))
 	FROM comanda_linia
-	WHERE numero='$numero' 
+	WHERE numero='$numero'
 	GROUP BY numero";
 
-	$result2 = mysql_query($taula2);
-	if (!$result2) {die('Invalid query2: ' . mysql_error());}
+	$result2 = mysqli_query($conn,$taula2);
+	if (!$result2) {die('Invalid query2: ' . mysqli_error($conn));}
 
-	list($totcom,$totcist,$totpreu)=mysql_fetch_row($result2);
+	list($totcom,$totcist,$totpreu)=mysqli_fetch_row($result2);
 	$totcom=sprintf("%01.2f",$totcom);
 	$totcist=sprintf("%01.2f",$totcist);
 	$totpreu=sprintf("%01.2f",$totpreu);
-	
+
 ?>
 
 <tr class='cos'>
@@ -80,7 +80,7 @@ while (list($numero,$familia,$check0)=mysql_fetch_row($result))
 	echo "<td align='center'>".$totcom."</td>";
 	echo "<td align='center'>".$totcist."</td>";
 	echo "<td align='center'>".$totpreu."€</td>";
-	echo "</tr>";	
+	echo "</tr>";
 }
 ?>
 
@@ -90,7 +90,7 @@ while (list($numero,$familia,$check0)=mysql_fetch_row($result))
 
 <p class="u-text-center">
 <button class="button button--animated button--white" name="sortir" type="button"  onClick="javascript:window.location = 'admint.php';">Finalizar <i class="fa fa-check" aria-hidden="true"></i></button>
-<button class="button button--animated button--white"  name="sortir" type="button" value="INCIDÈNCIES" 
+<button class="button button--animated button--white"  name="sortir" type="button" value="INCIDÈNCIES"
 	onClick="javascript:window.location = 'cistella_incidencia.php?id=<?php echo $gproces.'&id2='.$ggrup.'&id3='.$gbd_data; ?>';">Incidencias</button>
 </p>
 </div>
@@ -103,8 +103,8 @@ while (list($numero,$familia,$check0)=mysql_fetch_row($result))
 
 <?php
 include 'config/disconect.php';
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>

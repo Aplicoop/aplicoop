@@ -25,9 +25,9 @@ include ('config/configuracio.php');
 <html lang="es">
 	<head>
 		<?php include 'head.php'; ?>
-		<link rel="stylesheet" type="text/css" href="coope.css" />	
+		<link rel="stylesheet" type="text/css" href="coope.css" />
 		<title>crear nou proces ::: la coope</title>
-	
+
 		 <!-- calendar stylesheet -->
   <link rel="stylesheet" type="text/css" media="all" href="calendar/calendar-win2k-1.css" title="win2k-1" />
 
@@ -41,9 +41,9 @@ include ('config/configuracio.php');
        adding a calendar a matter of 1 or 2 lines of code. -->
   <script type="text/javascript" src="calendar/calendar-setup.js"></script>
 
-		
+
 	</head>
-	
+
 <script languaje="javascript">
 
 function change_tipus()
@@ -51,16 +51,16 @@ function change_tipus()
 	var nom = document.getElementById("nom");
 	var grup = document.getElementById("grup");
 	var tipus = document.getElementById("tipus");
-	
+
 		if (nom.value=="") {
 		alert ("T'has deixat el nom en blanc");
-		tipus.value=""; 
+		tipus.value="";
 		document.getElementById("nom").focus();
 		return false;
 		}
 		if (grup.value=="") {
 		alert ("T'has deixat el grup en blanc");
-		tipus.value=""; 
+		tipus.value="";
 		document.getElementById("grup").focus();
 		return false;
 		}
@@ -72,19 +72,19 @@ function validar_formulari()
 	var nom = document.getElementById("nom");
 	var grup = document.getElementById("grup");
 	var tipus = document.getElementById("tipus");
-	
+
 		if (nom.value=="") {
-		alert ("T'has deixat el nom en blanc"); 
+		alert ("T'has deixat el nom en blanc");
 		document.getElementById("nom").focus();
 		return false;
 		}
 		if (grup.value=="") {
-		alert ("T'has deixat el grup en blanc"); 
+		alert ("T'has deixat el grup en blanc");
 		document.getElementById("grup").focus();
 		return false;
 		}
 	if (tipus.value=="") {
-		alert ("Has d'escollir un tipus de procés"); 
+		alert ("Has d'escollir un tipus de procés");
 		document.getElementById("tipus").focus();
 		return false;
 		}
@@ -96,17 +96,17 @@ function validar_formulari()
 		array_dataf=dataf.value.split("/");
 		var datafi=array_dataf[2]+array_dataf[1]+array_dataf[0];
 		if (datai.value==""){
-			alert ("T'has deixat la data inicial en blanc"); 
+			alert ("T'has deixat la data inicial en blanc");
 			document.getElementById("f_date_a").focus();
 			return false;
 			}
 		if (dataf.value==""){
-			alert ("T'has deixat la data final en blanc"); 
+			alert ("T'has deixat la data final en blanc");
 			document.getElementById("f_date_b").focus();
 			return false;
 			}
 		if (parseInt(datafi)<=parseInt(dataini)){
-			alert ("La data final ha de ser igual o superior a la data inicial"); 
+			alert ("La data final ha de ser igual o superior a la data inicial");
 			document.getElementById("f_date_a").focus();
 			return false;
 			}
@@ -118,45 +118,45 @@ function validar_formulari()
 		var diat = document.getElementById("diat");
 		var horat = document.getElementById("horat");
 		if (per.value==""){
-			alert ("T'has deixat el període en blanc"); 
+			alert ("T'has deixat el període en blanc");
 			document.getElementById("periode").focus();
 			return false;
 			}
 			if (diare.value==""){
-			alert ("T'has deixat el dia de recollida en blanc"); 
+			alert ("T'has deixat el dia de recollida en blanc");
 			document.getElementById("diare").focus();
 			return false;
 			}
 			if (diat.value==""){
-			alert ("T'has deixat el dia de tall en blanc"); 
+			alert ("T'has deixat el dia de tall en blanc");
 			document.getElementById("diat").focus();
 			return false;
 			}
 		if (horat.value==""){
-			alert ("T'has deixat hora de tall en blanc"); 
+			alert ("T'has deixat hora de tall en blanc");
 			document.getElementById("horat").focus();
 			return false;
 			}
-		
+
 		var horat1=horat.value.substring(0,2);
 		var horat2=horat.value.substring(2);
 		if (isNaN(horat1) || isNaN(horat2) || horat1=="" || horat2=="" || horat.value.length<4)
 		{
-			alert ("L'hora de tall ha de ser una xifra de quatre nombres: els dos primers representen l'hora i els dos segons els minuts"); 
+			alert ("L'hora de tall ha de ser una xifra de quatre nombres: els dos primers representen l'hora i els dos segons els minuts");
 			document.getElementById("horat").focus();
 			return false;
 		}
-		
+
 		if (horat1<0 || horat1>23)
 		{
-			alert("A horat: els dos primers nombres han d'estar entre l'interval	00 i 23 ja que respresenten les hores del dia"); 
+			alert("A horat: els dos primers nombres han d'estar entre l'interval	00 i 23 ja que respresenten les hores del dia");
 			document.getElementById("horat").focus();
 			return false;
 		}
-		
+
 		if (horat2<0 || horat2>60)
 		{
-			alert("A horat: els dos darrers nombres han d'estar entre l'interval	00 i 59 ja que respresenten els minuts"); 
+			alert("A horat: els dos darrers nombres han d'estar entre l'interval	00 i 59 ja que respresenten els minuts");
 			document.getElementById("horat").focus();
 			return false;
 		}
@@ -170,10 +170,10 @@ return true;
 <?php include 'menu.php'; ?>
 <div class="pagina" style="margin-top: 10px;">
 <div class="contenidor_1" style="border: 1px solid #66FF66;">
-<p class='path'> 
-><a href='admint.php'>administració</a> 
+<p class='path'>
+><a href='admint.php'>administració</a>
 >><a href='editprocessos.php'>crear, editar i eliminar processos</a>
->>><a href='createproces.php'>crear nou procés</a> 
+>>><a href='createproces.php'>crear nou procés</a>
 </p>
 <p class="h1" style="background: #66FF66; text-align: left; padding-left: 20px;">
 Crear nou procés
@@ -184,15 +184,15 @@ Crear nou procés
 if ($pnom!="" AND $pgrup!="" AND $pactiu!="")
 {
 
-	$select= "SELECT nom FROM processos	
+	$select= "SELECT nom FROM processos
 	WHERE nom='".$pnom."' AND grup='".$pgrup."' ";
-	$result = mysql_query($select) or die("Query failed. " . mysql_error());
-   	
-   	if (mysql_num_rows($result) == 1) 
+	$result = mysqli_query($conn,$select) or die("Query failed. " . mysqli_error($conn));
+
+   	if (mysqli_num_rows($result) == 1)
    	{
    		die
    		("<p class='comment'>
-   		No es pot crear de nou el procés ".$pnom." del grup ".$pgrup." perquè ja existeix. 
+   		No es pot crear de nou el procés ".$pnom." del grup ".$pgrup." perquè ja existeix.
    		</p>");
 		}
 		else
@@ -203,13 +203,13 @@ if ($pnom!="" AND $pgrup!="" AND $pactiu!="")
 			$pdataini = $pdatai2[2]."/".$pdatai2[1]."/".$pdatai2[0];
 			$pdatafin = $pdataf2[2]."/".$pdataf2[1]."/".$pdataf2[0];
 
-			$query2 = "INSERT INTO processos 
+			$query2 = "INSERT INTO processos
 			VALUES ('".$pnom."', '".$pgrup."', '".$ptipus."', '".$pdataini."', '".$pdatafin."',
 			'".$pperiode."', '".$pdiare."', '".$pdiat."', '".$phorat."', '".$pactiu."') ";
 
-			mysql_query($query2) or die('Error, insert query2 failed');
-	
-			echo 
+			mysqli_query($conn,$query2) or die('Error, insert query2 failed');
+
+			echo
 			"<p class='comment'>
 			Un nou procés s'ha introduit a la base de dades:</p>
 			<table width='25%' align='center' class='cos2' style='margin-bottom: 20px;'>
@@ -226,7 +226,7 @@ if ($pnom!="" AND $pgrup!="" AND $pactiu!="")
 			</table>";
 		}
 }
-else {	
+else {
 ?>
 
 <div class="contenidor_fac" style="border: 1px solid #66FF66; width: 500px; margin-bottom: 20px;" >
@@ -247,8 +247,8 @@ else {
 <?php
 
 	$select2= "SELECT nom FROM grups WHERE actiu='actiu' ORDER BY nom";
-	$result2 = mysql_query($select2) or die("Query2 failed. " . mysql_error());
-	while (list($sgrup)=mysql_fetch_row($result2)) 
+	$result2 = mysqli_query($conn,$select2) or die("Query2 failed. " . mysqli_error($conn));
+	while (list($sgrup)=mysqli_fetch_row($result2))
 {
 if ($pgrup==$sgrup)
 	{
@@ -411,12 +411,12 @@ Per canviar les dades clica el botó GUARDAR
 </body>
 </html>
 
-<?php 
+<?php
 
 include 'config/disconect.php';
 
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>

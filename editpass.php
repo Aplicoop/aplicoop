@@ -36,7 +36,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                 <?php
                 if (isset($click) and $click == "change-password") {
-                    $password = mysql_real_escape_string($password);
+                    $password = mysqli_real_escape_string($password);
 
                     //Setting flags for checking
                     $status = "OK";
@@ -54,7 +54,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                                 // if all validations are passed.
                                 $md5pass = md5($password);
                                 $query2 = "update usuaris set claudepas='$md5pass' where nom='$user'";
-                                mysql_query($query2) or die('Error, insert query2 failed');
+                                mysqli_query($conn,$query2) or die('Error, insert query2 failed');
                                 echo "<p  class='alert alert--info'>La contraseña ha sido cambiada correctamente.</p>";
                             }
                         }

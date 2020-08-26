@@ -2,7 +2,7 @@
 
 session_start();
 
-if ($_SESSION['image_is_logged_in'] == 'true' ) 
+if ($_SESSION['image_is_logged_in'] == 'true' )
 {
 
 	$user = $_SESSION['user'];
@@ -29,9 +29,9 @@ if ($_SESSION['image_is_logged_in'] == 'true' )
 <?php include 'menu.php'; ?>
 <div class="pagina" style="margin-top: 10px;">
 <div class="contenidor_1" style="border: 1px solid #990000;">
-<p class='path'> 
+<p class='path'>
 ><a href='admint.php'>administració</a>
->><a href='categories.php'>crear, editar i eliminar categories</a> 
+>><a href='categories.php'>crear, editar i eliminar categories</a>
 >>><a href='subcategories.php?id=<?php echo $gcat; ?>'>subcategories a <?php echo $gcat; ?></a>
 </p>
 
@@ -45,38 +45,38 @@ Subcategories a <?php echo $gcat; ?>
 
 	if ($psubcat != "")
 	{
-		$select= "SELECT subcategoria FROM subcategoria	
+		$select= "SELECT subcategoria FROM subcategoria
 		WHERE subcategoria='".$psubcat."' AND categoria='".$pcat."' ";
-		$result = mysql_query($select) or die("Query failed. " . mysql_error());
-   	
-   	if (mysql_num_rows($result) == 1) 
+		$result = mysqli_query($conn,$select) or die("Query failed. " . mysqli_error($conn));
+
+   	if (mysqli_num_rows($result) == 1)
    	{
    		die
    		("<p class='comment'>La subcategoria ".$psubcat." amb la categoria ".$pcat." ja existeix.</p>");
 		}
 		else
 		{
-			$query2 = "INSERT INTO subcategoria 
+			$query2 = "INSERT INTO subcategoria
 			VALUES ('".$psubcat."', '".$pcat."', 'activada') ";
-			mysql_query($query2) or die("Error, insert query2 failed");
+			mysqli_query($conn,$query2) or die("Error, insert query2 failed");
 		}
 	}
-	 
+
 	if ($gactiu != "")
 		{
 			$query3 = "UPDATE subcategoria
 			SET actiu= '".$gactiu."'
 			WHERE subcategoria='".$gsubcat."' AND categoria='".$gcat."' ";
-			mysql_query($query3) or die('Error, insert query3 failed');			
+			mysqli_query($conn,$query3) or die('Error, insert query3 failed');
 		}
-								
+
 	if ($elim != "")
 		{
 			$query4 = "DELETE FROM subcategoria
 			WHERE subcategoria='".$gsubcat."' AND categoria='".$gcat."' ";
-			mysql_query($query4) or die('Error, insert query4 failed');
-			
-			echo "<p class='comment'>La subcategoria ".$gsubcat." s'ha eliminat corectament</p>";			
+			mysqli_query($conn,$query4) or die('Error, insert query4 failed');
+
+			echo "<p class='comment'>La subcategoria ".$gsubcat." s'ha eliminat corectament</p>";
 		}
 
 ?>
@@ -94,13 +94,13 @@ Subcategories a <?php echo $gcat; ?>
 <?php
 
 		$taula = "SELECT subcategoria,actiu FROM subcategoria
-		WHERE categoria='".$gcat."' 
+		WHERE categoria='".$gcat."'
 		ORDER BY actiu, subcategoria";
-		$result = mysql_query($taula);
-		if (!$result) {die('Invalid query: ' . mysql_error());}
+		$result = mysqli_query($conn,$taula);
+		if (!$result) {die('Invalid query: ' . mysqli_error($conn));}
 
 		$k=0;
-		while (list($subcat,$actiu)=mysql_fetch_row($result))
+		while (list($subcat,$actiu)=mysqli_fetch_row($result))
 		{
 			$checked1="";
 			$checked2="";
@@ -127,7 +127,7 @@ onClick='if(confirm("Estas segur que vols eliminar la subcategoria <?php echo $s
 </tr></table></div>
 
 <p class="cos2" style="clear: both; text-align: center; padding: 0px 100px;">
-Per activar o desactivar clica el botó desitjat. 
+Per activar o desactivar clica el botó desitjat.
 Per borrar clica sobre la X de la columna ELIMINAR
 </p>
 
@@ -155,7 +155,7 @@ Crear nova subcategoria a <?php echo $gcat; ?>
 
 
 <p class="linia_button2" style="background: #990000; padding:4px 0px;
-height: 20px; text-align: center; vertical-align: middle;"> 
+height: 20px; text-align: center; vertical-align: middle;">
 <input class="button2" type="submit" value="CREAR">
 </p>
 </div>
@@ -172,8 +172,8 @@ Per crear una nova subcategoria omple l espai en blanc i clica CREAR.
 		include 'config/disconect.php';
 	}
 
-else 
+else
 {
-	header("Location: index.php"); 
+	header("Location: index.php");
 }
 ?>

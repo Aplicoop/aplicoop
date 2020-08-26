@@ -19,14 +19,14 @@ if (isset($_POST['txtUserId']) && isset($_POST['txtPassword'])) {
         // check if the user id and password combination exist
         $sql = "SELECT nom FROM usuaris  WHERE nom = '$userId' AND claudepas ='" . md5($password) . "' AND tipus2='actiu'";
 
-        $result = mysql_query($sql) or
-        die('Query failed. ' . mysql_error());
+        $result = mysqli_query($conn,$sql) or
+        die('Query failed. ' . mysqli_error($conn));
 
-        if (mysql_num_rows($result) == 1) {
+        if (mysqli_num_rows($result) == 1) {
             // the user id and password match,
             // check if the user is already active
 
-            list ($nom) = mysql_fetch_row($result);
+            list ($nom) = mysqli_fetch_row($result);
 
             // set the session
             $_SESSION['image_is_logged_in'] = true;
@@ -49,9 +49,9 @@ if (isset($_POST['txtUserId']) && isset($_POST['txtPassword'])) {
             //keep number session
             $sql2 = "INSERT INTO session (user, date, date2)
           		 VALUES ('$userId', '$timeinitse', '$timeinitse')";
-            mysql_query($sql2) or
-            die('Query2 failed. ' . mysql_error());
-            $sessionid = mysql_insert_id();
+            mysqli_query($conn,$sql2) or
+            die('Query2 failed. ' . mysqli_error($conn));
+            $sessionid = mysqli_insert_id();
             $_SESSION['sessionid'] = $sessionid;
 
             // after login we move to the main page

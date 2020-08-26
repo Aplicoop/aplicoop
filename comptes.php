@@ -55,11 +55,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
             //calcula realmente el total del moneder
             $select = "SELECT SUM(valor) AS total FROM moneder WHERE familia='" . $gfam . "'";
-            $query = mysql_query($select);
+            $query = mysqli_query($conn,$select);
             if (!$query) {
-                die('Invalid query: ' . mysql_error());
+                die('Invalid query: ' . mysqli_error($conn));
             }
-            list($mone) = mysql_fetch_row($query);
+            list($mone) = mysqli_fetch_row($query);
             $monea = "Monedero actual: " . $mone . "&#8364;";
         } else {
             $title1 = 'Listado de movimientos';
@@ -93,19 +93,19 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                                     <option value="">-- Seleccionar --</option>
                                     <?php
                                     $select3 = "SELECT nom FROM usuaris ORDER BY nom";
-                                    $query3 = mysql_query($select3);
+                                    $query3 = mysqli_query($conn,$select3);
                                     if (!$query3) {
-                                        die('Invalid query3: ' . mysql_error());
+                                        die('Invalid query3: ' . mysqli_error($conn));
                                     }
-                                    while (list($sfam) = mysql_fetch_row($query3)) {
+                                    while (list($sfam) = mysqli_fetch_row($query3)) {
                                         if ($pfam == $sfam) {
                                             echo '<option value="' . $sfam . '" selected>' . $sfam . '</option>';
                                             $select = "SELECT SUM(valor) AS total FROM moneder WHERE familia='" . $sfam . "'";
-                                            $query = mysql_query($select);
+                                            $query = mysqli_query($conn,$select);
                                             if (!$query) {
-                                                die('Invalid query: ' . mysql_error());
+                                                die('Invalid query: ' . mysqli_error($conn));
                                             }
-                                            list($mone) = mysql_fetch_row($query);
+                                            list($mone) = mysqli_fetch_row($query);
                                             $monea = "Monedero actual: " . $mone . "&#8364;";
                                         } else {
                                             echo '<option value="' . $sfam . '">' . $sfam . '</option>';
@@ -187,11 +187,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 print('</tr>');
 
                 $sel = "SELECT data FROM moneder " . $where;
-                $result = mysql_query($sel);
+                $result = mysqli_query($conn,$sel);
                 if (!$result) {
-                    die('Invalid query: ' . mysql_error());
+                    die('Invalid query: ' . mysqli_error($conn));
                 }
-                $rnum = mysql_num_rows($result);
+                $rnum = mysqli_num_rows($result);
 
                 if (!$gcont) {
                     $cont = 100;
@@ -200,13 +200,13 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 }
 
                 $sel2 = "SELECT data,familia,concepte,valor	FROM moneder " . $where . "	ORDER BY data DESC LIMIT " . $cont;
-                $result2 = mysql_query($sel2);
+                $result2 = mysqli_query($conn,$sel2);
                 if (!$result2) {
-                    die('Invalid query2: ' . mysql_error());
+                    die('Invalid query2: ' . mysqli_error($conn));
                 }
 
                 $k = 0;
-                while (list($data, $fam, $concepte, $valor) = mysql_fetch_row($result2)) {
+                while (list($data, $fam, $concepte, $valor) = mysqli_fetch_row($result2)) {
                     $datarc = explode("-", $data);
                     $datavis = $datarc[2] . '-' . $datarc[1] . '-' . $datarc[0];
                     if ($valor > 0) {

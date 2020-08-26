@@ -1,4 +1,4 @@
-<!-- 
+<!--
 Apartado economia Kidekoop. Este script esta diseniado para la gestion de economia de Kidekoop
 kidekoop.org
 
@@ -7,7 +7,7 @@ Contacto: info@kidekoop.org
 -->
 
 
-<?php 
+<?php
 session_start();
 
 if ($_SESSION['image_is_logged_in'] == 'true') {
@@ -19,8 +19,8 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
     include 'config/configuracio.php';
 
     $sel = "SELECT tipus FROM usuaris WHERE nom='$user'";
-    $query = mysql_query($sel) or die ('query failed: ' . mysql_error());
-    list($priv) = mysql_fetch_row($query);
+    $query = mysqli_query($conn,$sel) or die ('query failed: ' . mysqli_error($conn));
+    list($priv) = mysqli_fetch_row($query);
 
 ///sólo entramos si somos "super"////
 
@@ -61,21 +61,21 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                         $where = 'WHERE usuaris.tipus2 = "baixa"';
                     }
                     $query = "SELECT familia, usuaris.components, SUM(valor) as total FROM moneder JOIN usuaris ON usuaris.nom = moneder.familia ". $where ." GROUP BY familia ORDER BY total";
-                    $result = mysql_query($query);
+                    $result = mysqli_query($conn,$query);
                     if (!$result) {
-                        die('Invalid query: ' . mysql_error());
+                        die('Invalid query: ' . mysqli_error($conn));
                     }
-                    while (list($socio, $nom, $total) = mysql_fetch_row($result)) {
-                     ?>   
+                    while (list($socio, $nom, $total) = mysqli_fetch_row($result)) {
+                     ?>
                      <tr>
                         <td><?php echo $socio; ?></td>
                         <td><?php echo $nom; ?></td>
                         <td class="u-text-right"><?php echo $total; ?></td>
                     </tr>
-                    <?php 
+                    <?php
                     }
                     print ('</table>');
-                    ?> 
+                    ?>
                 </table>
             </div>
         </body>

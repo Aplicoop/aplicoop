@@ -23,7 +23,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 /// d'una proveïdora
     $pprov = $_POST['prov'];
 
-/// variables POST per guardar els canvis /// 
+/// variables POST per guardar els canvis ///
     $pref = $_POST['ref'];
     $ppreusi = $_POST['preusi'];
     $piva = $_POST['iva'];
@@ -41,11 +41,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 /// Busquem nomprod i nomprov a partir de prodref ////
     if ($gprodref) {
         $query0 = "SELECT nom, proveidora FROM productes WHERE ref='$gprodref'";
-        $result0 = mysql_query($query0);
+        $result0 = mysqli_query($conn,$query0);
         if (!$result0) {
             die("Query0 to show fields from table failed");
         }
-        list($gnomprod, $gprov) = mysql_fetch_row($result0);
+        list($gnomprod, $gprov) = mysqli_fetch_row($result0);
     }
     ///////////
 
@@ -200,7 +200,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
         }
         $gbutton = '<br/>
 			<p class="linia_button2" style="background: #990000; text-align: center; vertical-align: middle;">
-			<input class="button2" style="width:150px;" type="button" value="Tornar a Cistelles" 
+			<input class="button2" style="width:150px;" type="button" value="Tornar a Cistelles"
 			onClick="window.location=\'' . $href2 . '\'"></p>';
 
     } else {
@@ -252,14 +252,14 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             if ($ppreusiprevi[$i] != $ppreusi[$i]) {
                 $query6 = "UPDATE productes SET preusi=" . $ppreusi[$i] . "
 				WHERE ref='" . $pref[$i] . "'";
-                mysql_query($query6) or die('Error, update query6 failed');
+                mysqli_query($conn,$query6) or die('Error, update query6 failed');
                 $lp[$i] = "preu sense iva: " . $ppreusi[$i] . "€";
             }
 
             if ($pivaprevi[$i] != $piva[$i]) {
                 $query7 = "UPDATE productes SET iva=" . $piva[$i] . "
 				WHERE ref='" . $pref[$i] . "'";
-                mysql_query($query7) or die('Error, update query6 failed');
+                mysqli_query($conn,$query7) or die('Error, update query6 failed');
                 $li[$i] = "iva: " . $piva[$i];
             }
 
@@ -267,7 +267,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 $pmarge[$i] = $pmarge[$i] / 100;
                 $query8 = "UPDATE productes SET marge=" . $pmarge[$i] . "
 				WHERE ref='" . $pref[$i] . "'";
-                mysql_query($query8) or die('Error, update query8 failed');
+                mysqli_query($conn,$query8) or die('Error, update query8 failed');
                 $lm[$i] = "marge: " . $pmarge[$i];
             }
 
@@ -275,7 +275,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 $pdescompte[$i] = $pdescompte[$i] / 100;
                 $query8 = "UPDATE productes SET descompte=" . $pdescompte[$i] . "
 				WHERE ref='" . $pref[$i] . "'";
-                mysql_query($query8) or die('Error, update query8 failed');
+                mysqli_query($conn,$query8) or die('Error, update query8 failed');
                 $ld[$i] = "descompte: " . $pdescompte[$i];
             }
 
@@ -283,11 +283,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             if ($lp[$i] != "" OR $li[$i] != "" OR $lm[$i] != "" OR $ld[$i] != "") {
                 /// Busquem nomprod i nomprov a partir de ref ////
                 $query00 = "SELECT nom, proveidora FROM productes WHERE ref='$pref[$i]'";
-                $result00 = mysql_query($query00);
+                $result00 = mysqli_query($conn,$query00);
                 if (!$result00) {
                     die("Query00 to show fields from table failed");
                 }
-                list($pnomprod, $pprov) = mysql_fetch_row($result00);
+                list($pnomprod, $pprov) = mysqli_fetch_row($result00);
                 ///////////
 
                 $linia = $pnomprod . "-" . $pprov . "-" . $lp[$i] . "-" . $li[$i] . "-" . $lm[$i] . "-" . $ld[$i];
@@ -315,11 +315,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                             <?php
                             $select3 = "SELECT nom FROM proveidores ORDER BY nom";
-                            $query3 = mysql_query($select3);
+                            $query3 = mysqli_query($conn,$select3);
                             if (!$query3) {
-                                die('Invalid query3: ' . mysql_error());
+                                die('Invalid query3: ' . mysqli_error($conn));
                             }
-                            while (list($sprov) = mysql_fetch_row($query3)) {
+                            while (list($sprov) = mysqli_fetch_row($query3)) {
                                 if ($pprov == $sprov) {
                                     echo '<option value="' . $sprov . '" selected>' . $sprov . '</option>';
                                 } else {
@@ -341,15 +341,15 @@ margin-bottom: 20px; padding-bottom: 20px;">
                 <?php
 
                 print ('<p class="h1"
-		style="background: #990000; font-size:14px; text-align: left; 
+		style="background: #990000; font-size:14px; text-align: left;
 		height: 20px; padding-left: 20px;">' . $title . '</p>');
 
                 print('<table width="95%" align="center" style="padding:0px;" >');
 
                 $sel = "SELECT ref,nom,proveidora,preusi,iva,marge,descompte FROM productes " . $where . " ORDER BY nom";
-                $result = mysql_query($sel);
+                $result = mysqli_query($conn,$sel);
                 if (!$result) {
-                    die('Invalid query: ' . mysql_error());
+                    die('Invalid query: ' . mysqli_error($conn));
                 }
 
                 print('<tr class="cos_majus">
@@ -363,7 +363,7 @@ margin-bottom: 20px; padding-bottom: 20px;">
 
                 $id = 0;
                 $contador = 0;
-                while (list($prodref, $nomprod, $nomprov, $preusi, $iva, $marge, $descompte) = mysql_fetch_row($result)) {
+                while (list($prodref, $nomprod, $nomprov, $preusi, $iva, $marge, $descompte) = mysqli_fetch_row($result)) {
                     $marge = $marge * 100;
                     $descompte = $descompte * 100;
                     /// Si existeix GET i només busquem un sol producte llavors no volem que tingui l'enllaç

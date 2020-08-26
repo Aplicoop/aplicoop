@@ -79,11 +79,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                                     <option value="">-- Seleccionar --</option>
                                     <?php
                                     $select3 = "SELECT nom FROM usuaris ORDER BY nom";
-                                    $query3 = mysql_query($select3);
+                                    $query3 = mysqli_query($conn,$select3);
                                     if (!$query3) {
-                                        die('Invalid query3: ' . mysql_error());
+                                        die('Invalid query3: ' . mysqli_error($conn));
                                     }
-                                    while (list($sfam) = mysql_fetch_row($query3)) {
+                                    while (list($sfam) = mysqli_fetch_row($query3)) {
                                         if ($pfam == $sfam) {
                                             echo '<option value="' . $sfam . '" selected>' . $sfam . '</option>';
                                         } else {
@@ -172,11 +172,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
 
                 $sel = "SELECT numero FROM comanda " . $where;
-                $result = mysql_query($sel);
+                $result = mysqli_query($conn,$sel);
                 if (!$result) {
-                    die('Invalid query: ' . mysql_error());
+                    die('Invalid query: ' . mysqli_error($conn));
                 }
-                $rnum = mysql_num_rows($result);
+                $rnum = mysqli_num_rows($result);
 
                 if (!$gcont) {
                     $cont = 50;
@@ -189,13 +189,13 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 $sel2 = "SELECT numero,usuari,proces,grup,data,check0,report0,data2,check1,check2,notes
 	FROM comanda " . $where . "
 	ORDER BY numero " . $ordre . " LIMIT " . $cont;
-                $result2 = mysql_query($sel2);
+                $result2 = mysqli_query($conn,$sel2);
                 if (!$result2) {
-                    die('Invalid query2: ' . mysql_error());
+                    die('Invalid query2: ' . mysqli_error($conn));
                 }
 
                 $k = 0;
-                while (list($numero, $fam, $proces, $grup, $data, $check0, $report0, $data2, $check1, $check2, $notes) = mysql_fetch_row($result2)) {
+                while (list($numero, $fam, $proces, $grup, $data, $check0, $report0, $data2, $check1, $check2, $notes) = mysqli_fetch_row($result2)) {
                     $datarc = explode("-", $data);
                     $datavis = $datarc[2] . '-' . $datarc[1] . '-' . $datarc[0];
                     $data_c = explode("-", $data2);

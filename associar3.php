@@ -59,27 +59,27 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             if ($proc != "") {
                 $select = "SELECT proces,grup,categoria FROM proces_linia
 	WHERE proces='" . $proc . "' AND grup='" . $grup . "' AND categoria='" . $cat . "' ";
-                $result = mysql_query($select) or die('Query failed. ' . mysql_error());
-                if (mysql_num_rows($result) == 1) {
+                $result = mysqli_query($conn,$select) or die('Query failed. ' . mysqli_error($conn));
+                if (mysqli_num_rows($result) == 1) {
                     echo
                         "<p class='comment'>L'associació de " . $proc . ", " . $grup . " i " . $cat . " no es pot crear de nou perquè ja existeix.
 	</p>";
                 } else {
                     $select8 = "SELECT MAX(ordre) FROM proces_linia
 		WHERE proces='" . $proc . "' AND grup='" . $grup . "' ";
-                    $query8 = mysql_query($select8);
+                    $query8 = mysqli_query($conn,$select8);
                     if (!$query8) {
-                        die('Invalid query8: ' . mysql_error());
+                        die('Invalid query8: ' . mysqli_error($conn));
                     }
 
-                    list($max) = mysql_fetch_row($query8);
+                    list($max) = mysqli_fetch_row($query8);
                     $ordre = $max + 1;
                     $actiu = 'activat';
 
                     $query2 = "INSERT INTO proces_linia
 		VALUES ('" . $proc . "', '" . $grup . "', '" . $cat . "', '" . $ordre . "', '" . $actiu . "') ";
 
-                    mysql_query($query2) or die('Error, insert query2 failed');
+                    mysqli_query($conn,$query2) or die('Error, insert query2 failed');
 
                     echo
                         "<p class='comment'>Una nova associació s'ha introduit a la base de dades:</p>
@@ -102,12 +102,12 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                                         <?php
                                         $select2 = "SELECT nom, grup FROM processos WHERE actiu='actiu' ORDER BY nom ASC";
-                                        $query2 = mysql_query($select2);
+                                        $query2 = mysqli_query($conn,$select2);
                                         if (!$query2) {
-                                            die('Invalid query2: ' . mysql_error());
+                                            die('Invalid query2: ' . mysqli_error($conn));
                                         }
 
-                                        while (list($sproc, $sgrup) = mysql_fetch_row($query2)) {
+                                        while (list($sproc, $sgrup) = mysqli_fetch_row($query2)) {
                                             echo '<OPTION value="' . $sproc . '-' . $sgrup . '">' . $sproc . '-' . $sgrup . '</OPTION>';
                                         }
                                         ?>
@@ -122,12 +122,12 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                                         <?php
 
                                         $select4 = "SELECT tipus FROM categoria WHERE actiu=1 ORDER BY tipus ASC";
-                                        $query4 = mysql_query($select4);
+                                        $query4 = mysqli_query($conn,$select4);
                                         if (!$query4) {
-                                            die('Invalid query4: ' . mysql_error());
+                                            die('Invalid query4: ' . mysqli_error($conn));
                                         }
 
-                                        while (list($scat) = mysql_fetch_row($query4)) {
+                                        while (list($scat) = mysqli_fetch_row($query4)) {
                                             echo '<OPTION value="' . $scat . '">' . $scat;
                                         }
                                         ?>

@@ -81,31 +81,31 @@ var x = new Array();
 var nom = new Array();
 
 if (jprov.value== "") {
-     alert ('Has d\'elegir una proveïdora'); 
+     alert ('Has d\'elegir una proveïdora');
 	  jprov.focus();
      return false;
 }
 
 if (jdata.value== "") {
-     alert ('Has d\'introduir la data de l\'albarà'); 
+     alert ('Has d\'introduir la data de l\'albarà');
 	  jdata.focus();
      return false;
 }
 
 if (isNaN(jtotsi.value)) {
-     alert ('El total sense iva ha de ser un valor numèric. El punt decimal no pot ser una coma.'); 
+     alert ('El total sense iva ha de ser un valor numèric. El punt decimal no pot ser una coma.');
 	  jtotsi.focus();
      return false;
 }
 
 if (isNaN(jtotiva.value)) {
-     alert ('El total d\'iva ha de ser un valor numèric. El punt decimal no pot ser una coma.'); 
+     alert ('El total d\'iva ha de ser un valor numèric. El punt decimal no pot ser una coma.');
 	  jtotiva.focus();
      return false;
 }
 
 if (isNaN(jtot.value)) {
-     alert ('El total amb iva ha de ser un valor numèric. El punt decimal no pot ser una coma.'); 
+     alert ('El total amb iva ha de ser un valor numèric. El punt decimal no pot ser una coma.');
 	  jtot.focus();
      return false;
 }
@@ -115,7 +115,7 @@ x[i] = document.getElementById("num"+i).value;
 nom[i]= document.getElementById("nom"+i).value;
 
 if (isNaN(x[i])) {
-alert ('A ' + nom[i] + ': només s/accepten numeros i el punt decimal'); 
+alert ('A ' + nom[i] + ': només s/accepten numeros i el punt decimal');
 document.getElementById("num"+i).focus();
 return false;
 break;
@@ -124,7 +124,7 @@ break;
 }
 
 return true;
-	
+
 }
 
 function copydata() {
@@ -157,10 +157,10 @@ function copydata2() {
 <div class="pagina" style="margin-top: 10px;">
 <div class="contenidor_1" style="border: 1px solid #990000">
 
-<p class='path'> 
+<p class='path'>
 ><a href='admint.php'>administració</a>
 >><a href='albarans.php'>llistat d'albarans</a>
->>><a href='create_alb.php'>crear albarà</a> 
+>>><a href='create_alb.php'>crear albarà</a>
 </p>
 <p class="h1" style="background: #990000; text-align: left; padding-left: 20px;">
 Crear albarà</p>
@@ -169,11 +169,11 @@ Crear albarà</p>
 $files = count($num);
 if ($files!="")
 {
-	$query="INSERT INTO albara (proveidora,data,totsi,totiva,tot,notes) 
+	$query="INSERT INTO albara (proveidora,data,totsi,totiva,tot,notes)
 	VALUES ('$pprov','$pdataintro','$ptotsi','$ptotiva','$ptot','$notes')";
-	mysql_query($query) or die('Error, la inserció de dades no ha estat possible');
-	$num_alb=mysql_insert_id();
-		
+	mysqli_query($conn,$query) or die('Error, la inserció de dades no ha estat possible');
+	$num_alb=mysqli_insert_id();
+
 	echo '<table style="padding: 10px;" width="70%" align="center" cellspading="5" cellspacing="5" >
 				<tr>
 				<td align="left" class="cos_majus">Albarà numero:<span class="cos" align="left" >'.$num_alb.'</span></td>
@@ -183,26 +183,26 @@ if ($files!="")
 				</table>
 				<table style="padding: 10px;" width="70%" align="center" cellspading="5" cellspacing="5" >
 				<tr><td>';
-				
-	for ($i=0; $i<$files; $i++) 
-	{					
-		if ($num[$i] != "") 
+
+	for ($i=0; $i<$files; $i++)
+	{
+		if ($num[$i] != "")
 		{
-			$query4 = "INSERT INTO albara_linia(numero, producte, quantitat) 
+			$query4 = "INSERT INTO albara_linia(numero, producte, quantitat)
 			VALUES ('$num_alb', '$nomp[$i]', '$num[$i]')";
-			mysql_query($query4) or die('Error, insert4 query failed');
+			mysqli_query($conn,$query4) or die('Error, insert4 query failed');
 
 			$query5= "SELECT pr.nom,pr.categoria,cat.estoc
-			FROM productes AS pr, categoria AS cat 
+			FROM productes AS pr, categoria AS cat
 			WHERE pr.nom='$nomp[$i]' AND pr.categoria=cat.tipus";
-			$result5=mysql_query($query5);
+			$result5=mysqli_query($conn,$query5);
 			if (!$result5) { die("Query5 to show fields from table failed");}
-			list($v1,$v2,$sestoc)=mysql_fetch_row($result5);
+			list($v1,$v2,$sestoc)=mysqli_fetch_row($result5);
 			if ($sestoc=='si')
 			{
 				$query7 = "UPDATE productes SET estoc=estoc+'$num[$i]' WHERE nom='$nomp[$i]'";
-				mysql_query($query7) or die('Error, update query7 failed');
-			}			
+				mysqli_query($conn,$query7) or die('Error, update query7 failed');
+			}
 			print ('<p class="cos" align="left">- '.$num[$i].' '.$unitat[$i].' de '.$nomp[$i].'.</p>');
 		}
 	}
@@ -215,7 +215,7 @@ if ($files!="")
 				</tr>
 				<tr><td align="left" class="cos_majus">Comentaris:<span class="cos" align="left" >'.$pnotes.'</span></td>
 				<td></td><td></td>
-				</tr>	
+				</tr>
 				</table>';
 }
 else
@@ -233,10 +233,10 @@ else
 
 <?php
 $query= "SELECT nom FROM proveidores ORDER BY nom";
-$result=mysql_query($query);
+$result=mysqli_query($conn,$query);
 if (!$result) {die("Query to show fields from table failed");}
 
-while (list($sprov)=mysql_fetch_row($result)) 
+while (list($sprov)=mysqli_fetch_row($result))
 {
 	if ($pprov==$sprov){echo '<option value="'.$sprov.'" selected>'.$sprov.'</option>';}
 	else {echo '<option value="'.$sprov.'">'.$sprov.'</option>';}
@@ -265,12 +265,12 @@ if ($pprov!="")
 	</tr>
 
 	<tr><td class="cos_majus">Total sense iva:</td>
-	<td class="cos"><input align="right" value="<?php echo $ptotsi; ?>" name="totsi" id="totsi" type="TEXT" 
+	<td class="cos"><input align="right" value="<?php echo $ptotsi; ?>" name="totsi" id="totsi" type="TEXT"
 	maxlength="10" size="5" onChange="return checktotal()">
 	</td></tr>
-	
+
 	<tr><td class="cos_majus">Total iva:</td>
-	<td class="cos"><input align="right" value="<?php echo $ptotiva; ?>" name="totiva" id="totiva" type="TEXT" 
+	<td class="cos"><input align="right" value="<?php echo $ptotiva; ?>" name="totiva" id="totiva" type="TEXT"
 	maxlength="10" size="5" onChange="return checktotal()">
 	</td></tr>
 
@@ -282,8 +282,8 @@ if ($pprov!="")
 	<td class="cos"><input align="right" value="<?php echo $pnotes; ?>" name="notes" id="notes" type="TEXT" maxlength="255" size="35">
 	</td></tr>	</table>
 	</form>
-	
-	<FORM action="create_alb.php"  method="POST" name="tres" id="tres" 
+
+	<FORM action="create_alb.php"  method="POST" name="tres" id="tres"
 	onSubmit="return validar_Form();">
 	<input type="hidden" value="" name="prov" id="prov" >
 	<input type="hidden" value="" name="data" id="data" >
@@ -303,15 +303,15 @@ if ($pprov!="")
 
 ?>
 	<p class="cos_majus" style="background: #990000; text-align: left; padding: 0 0 4px 20px;">
-	Incloure: 
+	Incloure:
 	tots els productes<input type="radio" name="des" value="si" id="des" onClick="copydata2()" <?php echo $checked4; ?> >
 	només actius<input type="radio" name="des" value="no" id="des" onClick="copydata2()" <?php echo $checked3; ?> >
 	</p>
 	</form>
-	
+
 	<div id="contenidor_1" style="height: 210px; overflow: scroll; overflow-x: hidden;">
 
-	<FORM action="create_alb.php"  method="POST" name="two" id="two" 
+	<FORM action="create_alb.php"  method="POST" name="two" id="two"
 	onSubmit="return validar_Form();">
 <input type="hidden" value="" name="prov" id="prov" >
 <input type="hidden" value="" name="data" id="data" >
@@ -321,21 +321,21 @@ if ($pprov!="")
 <input type="hidden" value="" name="notes" id="notes" >
 <input type="hidden" value="" name="des" id="des" >
 <?php
-	$sel3 = "SELECT nom,unitat 
+	$sel3 = "SELECT nom,unitat
 	FROM productes
 	WHERE proveidora='$pprov' $prodact
 	ORDER BY nom";
-	$result3 = mysql_query($sel3);
-	if (!$result3) {die('Invalid query3: ' . mysql_error());}
+	$result3 = mysqli_query($conn,$sel3);
+	if (!$result3) {die('Invalid query3: ' . mysqli_error($conn));}
 
 	print ('<table style="padding: 10px;" width="80%" align="center" cellspading="5" cellspacing="5" >
 	<tr cos="cos_majus"><td width="50%" align="left">Producte</td><td width="25%" align="center">Quantitat</td>
 	<td width="25%" align="center">Unitat</td></tr>');
 	$id=0; $contador=0;
-	while(list($nomprod,$unitat) = mysql_fetch_row($result3))
+	while(list($nomprod,$unitat) = mysqli_fetch_row($result3))
 	{
 		print('<tr class="cos"><td align="left">'.$nomprod.': <input type=hidden name="nomp[]" id="nom'.$id.'" value="'.$nomprod.'"></td>
-		<td align="center"><input name="num[]" id="num'.$id.'" type="TEXT" maxlength="8" size="5"></td> 
+		<td align="center"><input name="num[]" id="num'.$id.'" type="TEXT" maxlength="8" size="5"></td>
 		<td align="center">'.$unitat.' <input type=hidden name="uni[]" id="uni'.$id.'" value="'.$unitat.'">
 		</td></tr>');
    	$contador++;
@@ -366,8 +366,8 @@ clica el botó CREAR abaix de tot</p>
 <?php
 }
 include 'config/disconect.php';
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>

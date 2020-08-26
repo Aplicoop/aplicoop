@@ -29,7 +29,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             </p>
             <p class="h1" style="background: #66FF66; text-align: left; padding-left: 20px;">
                 Crear, editar i eliminar processos
-<span style="display: inline; float: right; text-align: center; vertical-align: middle; 
+<span style="display: inline; float: right; text-align: center; vertical-align: middle;
 padding: 2px 50px 2px 0px;">
 <input class="button2" style="width: 150px;" type="button" value="CREAR PROCÉS NOU"
        onClick="javascript:window.location = 'createproces.php';">
@@ -41,8 +41,8 @@ padding: 2px 50px 2px 0px;">
                 if ($elim != "") {
                     $select = "SELECT proces FROM proces_linia
 	WHERE proces='" . $elim . "' AND grup='" . $elim2 . "'";
-                    $result = mysql_query($select) or die("Query failed. " . mysql_error());
-                    if (mysql_num_rows($result) >= 1) {
+                    $result = mysqli_query($conn,$select) or die("Query failed. " . mysqli_error($conn));
+                    if (mysqli_num_rows($result) >= 1) {
                         die
                         ("<p class='comment'>El procés " . $elim . " amb grup " . $elim2 . " està associat a categories.</p>
    				<p class='comment'>Hauries de borrar les associacions en primer terme.</p>
@@ -51,7 +51,7 @@ padding: 2px 50px 2px 0px;">
                     } else {
                         $query4 = "DELETE FROM processos
 					WHERE nom='" . $elim . "' AND grup='" . $elim2 . "' ";
-                        mysql_query($query4) or die('Error, insert query4 failed');
+                        mysqli_query($conn,$query4) or die('Error, insert query4 failed');
                         echo "<p class='comment' style='margin-bottom: 20px;'>
 					El procés " . $elim . " amb grup " . $elim2 . " s'ha eliminat.</p>";
                     }
@@ -77,15 +77,15 @@ padding: 2px 50px 2px 0px;">
                     <?php
 
                     $taula = "SELECT nom, grup, tipus, data_inici, data_fi, dia_recollida, periode, dia_tall, hora_tall, actiu
-			FROM processos 
+			FROM processos
 			ORDER BY actiu,data_inici ASC";
 
-                    $result = mysql_query($taula);
+                    $result = mysqli_query($conn,$taula);
                     if (!$result) {
-                        die('Invalid query: ' . mysql_error());
+                        die('Invalid query: ' . mysqli_error($conn));
                     }
 
-                    while (list($nom, $grup, $tipus, $di, $df, $diare, $periode, $diat, $horat, $actiu) = mysql_fetch_row($result)) {
+                    while (list($nom, $grup, $tipus, $di, $df, $diare, $periode, $diat, $horat, $actiu) = mysqli_fetch_row($result)) {
                         $di2 = explode("-", $di);
                         $dini = $di2[2] . "/" . $di2[1] . "/" . $di2[0];
                         if ($dini == "00/00/0000") {

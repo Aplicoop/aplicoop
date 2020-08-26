@@ -51,7 +51,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             var email2 = document.getElementById("email2").value;
             var kuota = document.getElementById("kuota").value;
             //var fechaalta = document.getElementById("fechaalta").value;
-            
+
 
 
             if (nom == "") {
@@ -141,7 +141,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                         $query2 = "INSERT INTO usuaris
 	VALUES ('" . $p_nom . "', '" . $md5_cdp . "', '" . $p_tip . "', '" . $p_tip2 . "', '" . $p_dia . "', '0', '" . $p_comp . "', '" . $p_tlf1 . "', '" . $p_tlf2 . "', '" . $p_email1 . "', '" . $p_email2 . "', '" . $p_nomf . "', '" . $p_adressf . "', '" . $p_niff . "', '" . $p_nota . "','" . $p_kuota . "','" . $p_IBAN . "','" . $p_domiciliacion . "','" . $p_fechaalta . "') ";
 
-                        mysql_query($query2) or die('Error, insert query2 failed:' . mysql_error());
+                        mysqli_query($conn,$query2) or die('Error, insert query2 failed:' . mysqli_error($conn));
 
                         echo
                             "<tr><td align='center' class='cos2'>
@@ -162,7 +162,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
     <p>KUOTA: " . $p_kuota . "</p>
     <p>IBAN: " . $p_IBAN . "</p>
     <p>Domiciliacion: "; if ($p_domiciliacion == 1){echo "Si";} else {echo "No";} echo "</p>
-    <p>Fecha de alta: " . $p_fechaalta . "</p>  
+    <p>Fecha de alta: " . $p_fechaalta . "</p>
 	<p>COMENTARIS: " . $p_nota . "</p>
 	</td></tr>
 	</table>";
@@ -210,12 +210,12 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                                     <?php
                                     $select3 = "SELECT nom FROM grups ORDER BY nom";
-                                    $query3 = mysql_query($select3);
+                                    $query3 = mysqli_query($conn,$select3);
                                     if (!$query3) {
-                                        die('Invalid query3: ' . mysql_error());
+                                        die('Invalid query3: ' . mysqli_error($conn));
                                     }
 
-                                    while (list($sgrup) = mysql_fetch_row($query3)) {
+                                    while (list($sgrup) = mysqli_fetch_row($query3)) {
                                         echo '<option value="' . $sgrup . '">' . $sgrup . '</option>';
                                     }
                                     ?>

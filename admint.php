@@ -9,8 +9,8 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
     include 'config/configuracio.php';
 
     $sel = "SELECT tipus FROM usuaris WHERE nom='$user'";
-    $query = mysql_query($sel) or die ('query failed: ' . mysql_error());
-    list($priv) = mysql_fetch_row($query);
+    $query = mysqli_query($conn,$sel) or die ('query failed: ' . mysqli_error($conn));
+    list($priv) = mysqli_fetch_row($query);
 
 ///sólo entramos si somos "super"////
 

@@ -40,7 +40,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             </p>
             <p class="h1" style="background: orange; text-align: left; padding-left: 20px;">
                 Crear i editar famílies
-<span style="display: inline; float: right; text-align: center; vertical-align: middle; 
+<span style="display: inline; float: right; text-align: center; vertical-align: middle;
 padding: 2px 50px 2px 0px;">
 <input class="button2" style="width: 150px;" type="button" value="CREAR FAMILIA NOVA"
        onClick="javascript:window.location = 'createfam.php';">
@@ -53,7 +53,7 @@ padding: 2px 50px 2px 0px;">
                 $query2 = "UPDATE usuaris
 			SET tipus2='" . $gactiu . "'
 			WHERE nom='" . $gnom . "' ";
-                mysql_query($query2) or die('Error, insert query2 failed');
+                mysqli_query($conn,$query2) or die('Error, insert query2 failed');
                 $pactiu = $gpactiu;
                 $pgrup = $gpgrup;
                 $ptipus = $gptipus;
@@ -63,7 +63,7 @@ padding: 2px 50px 2px 0px;">
                 $query3 = "UPDATE usuaris
 			SET dia='" . $ggrup . "'
 			WHERE nom='" . $gnom . "' ";
-                mysql_query($query3) or die('Error, insert query3 failed');
+                mysqli_query($conn,$query3) or die('Error, insert query3 failed');
                 $pactiu = $gpactiu;
                 $pgrup = $gpgrup;
                 $ptipus = $gptipus;
@@ -73,7 +73,7 @@ padding: 2px 50px 2px 0px;">
                 $query4 = "UPDATE usuaris
 			SET tipus='" . $gtipus . "'
 			WHERE nom='" . $gnom . "' ";
-                mysql_query($query4) or die('Error, insert query4 failed');
+                mysqli_query($conn,$query4) or die('Error, insert query4 failed');
                 $pactiu = $gpactiu;
                 $pgrup = $gpgrup;
                 $ptipus = $gptipus;
@@ -117,12 +117,12 @@ padding: 2px 50px 2px 0px;">
 
                             <?php
                             $select3 = "SELECT nom FROM grups ORDER BY nom";
-                            $query3 = mysql_query($select3);
+                            $query3 = mysqli_query($conn,$select3);
                             if (!$query3) {
-                                die('Invalid query3: ' . mysql_error());
+                                die('Invalid query3: ' . mysqli_error($conn));
                             }
 
-                            while (list($sgrup) = mysql_fetch_row($query3)) {
+                            while (list($sgrup) = mysqli_fetch_row($query3)) {
                                 if ($pgrup == $sgrup) {
                                     echo '<option value="' . $sgrup . '" selected>' . $sgrup . '</option>';
                                 } else {
@@ -226,7 +226,7 @@ padding: 2px 50px 2px 0px;">
                 }
 
                 print ('<p class="h1"
-		style="background: orange; font-size:14px; text-align: left; 
+		style="background: orange; font-size:14px; text-align: left;
 		height: 20px; padding-left: 20px;">
 		' . $title . '
 		</p>');
@@ -243,12 +243,12 @@ padding: 2px 50px 2px 0px;">
                 $taula = "SELECT nom,components,tipus,tipus2,dia
 		FROM usuaris " . $where . "
 		ORDER BY nom";
-                $result = mysql_query($taula);
+                $result = mysqli_query($conn,$taula);
                 if (!$result) {
-                    die('Invalid query: ' . mysql_error());
+                    die('Invalid query: ' . mysqli_error($conn));
                 }
                 $k = 0;
-                while (list($nom, $components, $tipus, $tipus2, $dia) = mysql_fetch_row($result))
+                while (list($nom, $components, $tipus, $tipus2, $dia) = mysqli_fetch_row($result))
                 {
                 if ($tipus2 == "actiu") {
                     $checked8 = "checked";
@@ -276,12 +276,12 @@ padding: 2px 50px 2px 0px;">
 
                             <?php
                             $select4 = "SELECT nom FROM grups ORDER BY nom";
-                            $query4 = mysql_query($select4);
+                            $query4 = mysqli_query($conn,$select4);
                             if (!$query4) {
-                                die('Invalid query4: ' . mysql_error());
+                                die('Invalid query4: ' . mysqli_error($conn));
                             }
 
-                            while (list($wgrup) = mysql_fetch_row($query4)) {
+                            while (list($wgrup) = mysqli_fetch_row($query4)) {
                                 if ($wgrup == $dia) {
                                     echo '<option value="' . $wgrup . '" selected>' . $wgrup . '</option>';
                                 } else {

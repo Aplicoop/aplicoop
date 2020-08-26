@@ -2,7 +2,7 @@
 
 session_start();
 
-if ($_SESSION['image_is_logged_in'] == 'true' ) 
+if ($_SESSION['image_is_logged_in'] == 'true' )
 {
 	$user = $_SESSION['user'];
 	$sessionid=$_SESSION['sessionid'];
@@ -13,14 +13,14 @@ if ($_SESSION['image_is_logged_in'] == 'true' )
 	$ggrup=$_GET['id4'];
 	$gvis=$_GET['id5'];
 	$gnumfact=$_GET['id6'];
-	
+
 	//vol evitar que algú es col·li escrivint codi directament a l'adreça html //
 	if ($_SESSION['codi_cistella'] != 'in')
 	{
 		$gvis=0;
 	}
 	////
-	
+
 	list($mdiatdx, $mestdx, $anytdx ) = explode("-", $gdata);
 	$gbd_data=$anytdx."-".$mestdx."-".$mdiatdx;
 
@@ -29,13 +29,13 @@ if ($_SESSION['image_is_logged_in'] == 'true' )
 	$post_cistella=$_POST["num"];
 	$post_familia=$_POST["nom"];
 	$post_numcmda=$_POST["numcmda"];
-/// Un altre de cistella_mes.php ///	
+/// Un altre de cistella_mes.php ///
 	$paddfam=$_POST['nouf'];
 	$pprov=$_POST['prov'];
 	$pprod=$_POST['prod'];
 	$pref=$_POST['ref'];
 	$pnum=$_POST['num'];
-	
+
 	// si hi ha un numero comanda de factura //
 	if ($gnumfact!=""){$aw='AND c.numero='.$gnumfact; $id6='&id6='.$gnumfact; $id8='&id8='.$gnumfact;}
 	else {$aw=""; $id6=""; $id8="";}
@@ -43,124 +43,124 @@ if ($_SESSION['image_is_logged_in'] == 'true' )
 
 	include 'config/configuracio.php';
 	$nota="";
-	
-	
+
+
 	////////////////////////////////////////////
 	/// Si hi ha un POST procedent de cistella_mes.php ///
 	/// llavors s'ha d'afegir el producte al proces ///
 	/// creant si no existeix una comanda per a una família ///
 	//////////////////////////////////////////////
-	
+
 	if ($paddfam)
-	{		
-		if($pnum!="") 
-		{		
+	{
+		if($pnum!="")
+		{
 			$query2 = "INSERT INTO comanda_linia (numero, ref, quantitat, cistella)
 				VALUES ('$pnum', '$pref', '1', '0')";
-			mysql_query($query2) or die('Error, insert query2 failed');
+			mysqli_query($conn,$query2) or die('Error, insert query2 failed');
 		}
-		else 
+		else
 		{
 			$query3 = "INSERT INTO comanda ( `usuari` , `proces`, `grup`, `sessionid` , `data` )
 				VALUES ('$paddfam', '$gproces', '$ggrup', '$sessionid', '$gbd_data')";
-			mysql_query($query3) or die('Error, insert query3 failed');
-			$inumcmda=mysql_insert_id(); 		
+			mysqli_query($conn,$query3) or die('Error, insert query3 failed');
+			$inumcmda=mysqli_insert_id();
 
 			$query4 = "INSERT INTO comanda_linia (numero, ref, quantitat, cistella)
 				VALUES ('$inumcmda', '$pref', '1', '0')";
-			mysql_query($query4) or die('Error, insert query4 failed'); 	
-		}	
-	}	
-	
-	
-	
+			mysqli_query($conn,$query4) or die('Error, insert query4 failed');
+		}
+	}
+
+
+
 	////////////////////////////////////////////
 	// si hi ha dades d'un producte GET id i POST llavors les guarda //
 	// implica retorn de cistelles_prod.php /////////
 	// amb informació de les cistelles per guardar //
 	/////////////////////////////////////////////////
-	
-	if ($gprodref!="") 
+
+	if ($gprodref!="")
 	{
 		$files = count($post_cistella);
-	
+
 	/// Busquem nomprod i nomprov a partir de prodref ////
 	$query0= "SELECT nom, proveidora FROM productes WHERE ref='$gprodref'";
-	$result0=mysql_query($query0);
+	$result0=mysqli_query($conn,$query0);
 	if (!$result0) { die("Query0 to show fields from table failed");}
 
-	list($gnomprod,$gprov)=mysql_fetch_row($result0);
+	list($gnomprod,$gprov)=mysqli_fetch_row($result0);
 	///////////
-				
+
 		$select9= "SELECT pr.categoria, cat.estoc
 		FROM productes AS pr, categoria AS cat
 		WHERE pr.categoria=cat.tipus AND pr.ref='$gprodref'";
-		$result9 = mysql_query($select9);
-		if (!$result9) { die('Invalid query select9: ' . mysql_error());}
+		$result9 = mysqli_query($conn,$select9);
+		if (!$result9) { die('Invalid query select9: ' . mysqli_error($conn));}
 
-		list($scat,$sestoc)= mysql_fetch_row($result9);
-		
+		list($scat,$sestoc)= mysqli_fetch_row($result9);
+
 		$count=0;
-		for ($i=0; $i<$files; $i++) 
+		for ($i=0; $i<$files; $i++)
 		{
-			
+
 			if ($post_cistella[$i]==""){$post_cistella[$i]=0;}
 
-			$select= "SELECT cistella 
-			FROM comanda_linia 
+			$select= "SELECT cistella
+			FROM comanda_linia
 			WHERE numero='$post_numcmda[$i]' AND ref='$gprodref'";
-			$result = mysql_query($select);
-			if (!$result) { die('Invalid query select: ' . mysql_error());}
+			$result = mysqli_query($conn,$select);
+			if (!$result) { die('Invalid query select: ' . mysqli_error($conn));}
 
-			list($c)= mysql_fetch_row($result);
-			
+			list($c)= mysqli_fetch_row($result);
+
 			// Si estem editant la variable cistella, primer introdueix el seu valor a l estoc ///
-						
+
 				if ($c!="" AND $sestoc=='si')
 				{
-				$query6= "UPDATE productes 
+				$query6= "UPDATE productes
 				SET estoc=estoc+'$c'
 				WHERE ref='$gprodref'";
-				mysql_query($query6) or die('Error, insert query6 failed');
+				mysqli_query($conn,$query6) or die('Error, insert query6 failed');
 				}
-			
+
 			///////////////////////////////////////
 			/// Calculem el pvp sense iva. Preu*marge ///
-			///////////////////////////////////////			
-			
+			///////////////////////////////////////
+
 				$select10= "SELECT preusi, iva, marge, descompte FROM productes WHERE ref='$gprodref'";
-				$result10 = mysql_query($select10);
-				if (!$result10) { die('Invalid query select10: ' . mysql_error());}
-				list($spreusi,$siva,$smarge,$sdescompte)= mysql_fetch_row($result10);
-											
+				$result10 = mysqli_query($conn,$select10);
+				if (!$result10) { die('Invalid query select10: ' . mysqli_error($conn));}
+				list($spreusi,$siva,$smarge,$sdescompte)= mysqli_fetch_row($result10);
+
 				$pvp=$spreusi*(1+$smarge);
-				$pvp=sprintf("%01.2f", $pvp);		
+				$pvp=sprintf("%01.2f", $pvp);
 				$pvp2=$pvp*(1-$sdescompte);
 				$pvp2=sprintf("%01.2f", $pvp2);
-						
+
 				$query= "UPDATE comanda_linia
 					SET cistella='$post_cistella[$i]', preu='$pvp', iva='$siva', descompte='$sdescompte'
 				WHERE numero='$post_numcmda[$i]' AND ref='$gprodref'";
-				mysql_query($query) or die('Error, insert query failed');
-			
+				mysqli_query($conn,$query) or die('Error, insert query failed');
+
 				if ($sestoc=='si')
 				{
-					$query7= "UPDATE productes 
+					$query7= "UPDATE productes
 					SET estoc=estoc-'$post_cistella[$i]'
 					WHERE ref='$gprodref'";
-					mysql_query($query7) or die('Error, insert query7 failed');
-			}	
+					mysqli_query($conn,$query7) or die('Error, insert query7 failed');
+			}
 		}
 
 		$nota="<div class='alert alert--info u-mb-1'>Se han introducido correctamente los datos de la cesta del producto ".$gnomprod."-".$gprov."</div>";
 	}
-	
+
 	?>
 
 	<html lang="es">
 		<head>
-			<?php include 'head.php'; ?>						
-			<title>aplicoop - editar pedido</title>		
+			<?php include 'head.php'; ?>
+			<title>aplicoop - editar pedido</title>
 		</head>
 
 		<script language="javascript" type="text/javascript">
@@ -179,13 +179,13 @@ if ($_SESSION['image_is_logged_in'] == 'true' )
 
 	$taula3 = "SELECT check1
 			FROM cistella_check
-			WHERE proces='$gproces' AND grup='$ggrup' AND data='$gbd_data'";			
-	$result3 = mysql_query($taula3);
-	if (!$result3) {die('Invalid query3: ' . mysql_error());}
-	list($check)=mysql_fetch_row($result3);
-	
+			WHERE proces='$gproces' AND grup='$ggrup' AND data='$gbd_data'";
+	$result3 = mysqli_query($conn,$taula3);
+	if (!$result3) {die('Invalid query3: ' . mysqli_error($conn));}
+	list($check)=mysqli_fetch_row($result3);
+
 	/// Si no es pot editar (gvis=0) no hi ha botó de "pas segúent" ni d'"introduir nou producte" ///
-	if ($gvis==0) 
+	if ($gvis==0)
 	{
 		$link_cap="<a class='link' href='cistelles.php?id2=".$gdata."&id3=".$gproces."&id4=".$ggrup."&id5=0'>Ver cesta ".$gdata." - ".$gproces." - ".$ggrup."</a>";
 		$title="Ver pedido ".$gdata." - ".$gproces." - ".$ggrup;
@@ -197,7 +197,7 @@ if ($_SESSION['image_is_logged_in'] == 'true' )
 	{
 		$button='<button class="button button button--save button--animated" name="Gcodi" type="button"  onClick="confirma()">Siguiente paso <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>';
 		$sty="";
-		$nouproducte='<div class="u-cf"><button class="button button--animated u-mb-1 pull-right " type="button" 
+		$nouproducte='<div class="u-cf"><button class="button button--animated u-mb-1 pull-right " type="button"
 		onClick="javascript:window.location = \'cistella_mes.php?id3='.$gdata.'&id5='.$gvis.'&id6='.$gproces.'&id7='.$ggrup.'\'">Añadir nuevo producto <i class="fa fa-plus" aria-hidden="true"></i></button></div>';
 		if ($check==0)
 		{
@@ -208,7 +208,7 @@ if ($_SESSION['image_is_logged_in'] == 'true' )
 		{
 			$link_cap="<a class='link' href='cistelles.php?id2=".$gdata."&id3=".$gproces."&id4=".$ggrup."&id5=1".$id6."'>Editar cesta ".$gdata." - ".$gproces." - ".$ggrup."</a>";
 			$title="Editar cesta ".$gdata." - ".$gproces." - ".$ggrup;
-		}	
+		}
 	}
 ?>
 <body>
@@ -218,12 +218,12 @@ if ($_SESSION['image_is_logged_in'] == 'true' )
 	<div class="u-cf">
 		<h1 class="pull-left"><?php echo $link_cap; ?></h1>
 		<div class="pull-right u-mt-1 u-mb-1">
-			<button class="button button--animated"  type="button" 
+			<button class="button button--animated"  type="button"
 onClick="javascript:window.location = 'cistelles2.php?id2=<?php echo $gdata.'&id3='.$gproces.'&id4='.$ggrup.'&id5='.$gvis; ?>'">Pedidos por familia</button>
   		</div>
 	</div>
 
- 
+
 
 
 <?php echo $nouproducte; ?>
@@ -236,20 +236,20 @@ onClick="javascript:window.location = 'cistelles2.php?id2=<?php echo $gdata.'&id
 	$color2 = array("#1abc9c", "#e74c3c", "#34495e", "#b20000", "#9b59b6", "#f1c40f", "#f39c12", "#c0392b", "#2980b9");
 	$cc=0;
 	$sel = "SELECT tipus FROM categoria ORDER BY tipus";
-	$result = mysql_query($sel);
-	if (!$result) {die('Invalid query: ' . mysql_error()); }
-	while (list($cat)= mysql_fetch_row($result))
-	{	
+	$result = mysqli_query($conn,$sel);
+	if (!$result) {die('Invalid query: ' . mysqli_error($conn)); }
+	while (list($cat)= mysqli_fetch_row($result))
+	{
 		$taula2 = "SELECT cl.ref, pr.nom, pr.proveidora, pr.unitat, pr.categoria, c.numero, c.data
 		FROM comanda AS c, comanda_linia AS cl, productes AS pr
 		WHERE c.numero=cl.numero AND cl.ref=pr.ref
 		AND c.data='$gbd_data' AND pr.categoria='$cat' ".$aw;
-		$result2 = mysql_query($taula2);
-		if (!$result2) {die('Invalid query2: ' . mysql_error());}
-	
-		if (mysql_num_rows($result2)>0)
+		$result2 = mysqli_query($conn,$taula2);
+		if (!$result2) {die('Invalid query2: ' . mysqli_error($conn));}
+
+		if (mysqli_num_rows($result2)>0)
 		{
-			print ('<a href="#'.$cat.'" id="color" class="link u-text-semibold"  style="border-bottom: 1px solid transparent;color: '.$color2[$cc].'; 
+			print ('<a href="#'.$cat.'" id="color" class="link u-text-semibold"  style="border-bottom: 1px solid transparent;color: '.$color2[$cc].';
 				margin-bottom: 5px; margin-right: 3px; margin-right: 1rem;">
 				<span>'.$cat.'</span></a>');
 				$cc++;
@@ -261,22 +261,22 @@ onClick="javascript:window.location = 'cistelles2.php?id2=<?php echo $gdata.'&id
 	<div  style="overflow: auto; height: 44vh;">';
 	$cc=0;
 	$sel = "SELECT tipus FROM categoria ORDER BY tipus";
-	$result = mysql_query($sel);
-	if (!$result) {die('Invalid query: ' . mysql_error()); }
-	while (list($cat)= mysql_fetch_row($result))
-	{	
-	
+	$result = mysqli_query($conn,$sel);
+	if (!$result) {die('Invalid query: ' . mysqli_error($conn)); }
+	while (list($cat)= mysqli_fetch_row($result))
+	{
+
 	$taula2 = "SELECT cl.ref, pr.nom, pr.proveidora, pr.unitat, pr.categoria, c.numero, c.data, SUM(cl.quantitat) AS sum, SUM(cl.cistella) AS csum
 	FROM comanda AS c, comanda_linia AS cl, productes AS pr
-	WHERE c.numero=cl.numero AND cl.ref=pr.ref AND c.data='$gbd_data' 
+	WHERE c.numero=cl.numero AND cl.ref=pr.ref AND c.data='$gbd_data'
 	AND c.proces='$gproces' AND c.grup='$ggrup' AND pr.categoria='$cat' ".$aw."
 	GROUP BY cl.ref
 	ORDER BY pr.categoria, pr.proveidora, pr.nom";
 
-	$result2 = mysql_query($taula2);
-	if (!$result2) {die('Invalid query2: ' . mysql_error());}
-	
-	if (mysql_num_rows($result2)>0)
+	$result2 = mysqli_query($conn,$taula2);
+	if (!$result2) {die('Invalid query2: ' . mysqli_error($conn));}
+
+	if (mysqli_num_rows($result2)>0)
 	{
 		print ('<a name="'.$cat.'"></a>
 	  	<h2 style="color: '.$color2[$cc].'">'.$cat.'</h2>');
@@ -287,29 +287,29 @@ onClick="javascript:window.location = 'cistelles2.php?id2=<?php echo $gdata.'&id
 		echo "<td width='20%'  class='u-text-semibold  u-text-center'>Total cesta</td>";
 		echo "</tr>";
 
-		while (list($prodref,$nom_prod,$nom_prov,$uni,$t,$n,$d,$sum,$csum)=mysql_fetch_row($result2))
+		while (list($prodref,$nom_prod,$nom_prov,$uni,$t,$n,$d,$sum,$csum)=mysqli_fetch_row($result2))
 		{
 			$suma = sprintf("%01.2f", $sum); // pedido
 			$csuma= sprintf("%01.2f", $csum); // cesta
 			$estil="";
 
-			if ($csuma != 0 AND $csuma == $suma) 
+			if ($csuma != 0 AND $csuma == $suma)
 			{
 				$estil="u-color-ok";
 			}
 
-			if ($suma != 0 AND $csuma == 0) 
+			if ($suma != 0 AND $csuma == 0)
 			{
 				$estil="u-color-error";
 			}
-			
-			if ($csuma != 0 AND $csuma <> $suma) 
-			{				
+
+			if ($csuma != 0 AND $csuma <> $suma)
+			{
 				$estil="u-color-warning";
 			}
-			
+
 			$link="<a id='color2' class='link link--visitable' href='cistella_prod.php?id=".$prodref."&id3=".$gdata."&id4=".$cat."&id5=".$gvis."&id6=".$gproces."&id7=".$ggrup.$id8."'>".$nom_prod."-".$nom_prov."</a>";
-	
+
 			?>
 
 			<tr>
@@ -328,7 +328,7 @@ onClick="javascript:window.location = 'cistelles2.php?id2=<?php echo $gdata.'&id
 		}
 	}
 }
-	
+
 ?>
 </div>
 <div class="u-mt-1 u-text-center">
@@ -354,8 +354,8 @@ echo ''.$button.'';
 <?php
 include 'config/disconect.php';
 
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>

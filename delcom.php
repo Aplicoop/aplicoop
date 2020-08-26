@@ -12,12 +12,12 @@ $numcmda=$_GET['id'];
 include 'config/configuracio.php';
 
 $query = "DELETE FROM comanda_linia WHERE numero='$numcmda'";
-mysql_query($query) or die('Error, insert query failed');
+mysqli_query($conn,$query) or die('Error, insert query failed');
 
-$numrows = mysql_affected_rows();
+$numrows = mysqli_affected_rows();
 
 $query3 = "DELETE FROM comanda WHERE numero='$numcmda'";
-mysql_query($query3) or die('Error, insert query failed');
+mysqli_query($conn,$query3) or die('Error, insert query failed');
 
 
 
@@ -49,12 +49,12 @@ mysql_query($query3) or die('Error, insert query failed');
 </div>
 </body>
 </html>
-<?php 
+<?php
 
 include 'config/disconect.php';
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>
 

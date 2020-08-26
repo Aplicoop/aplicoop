@@ -15,20 +15,20 @@ $user = $_SESSION['user'];
 	$gproces=$_GET['id6'];
 	$ggrup=$_GET['id7'];
 	$gnumfact=$_GET['id8'];
-	
+
 	$paddfam=$_POST['nouf'];
 	$pnum=$_POST['num'];
-	
+
 	// si hi ha un numero comanda de factura //
 	if ($gnumfact!=""){$aw='AND c.numero='.$gnumfact; $id6='&id6='.$gnumfact; $id8='&id8='.$gnumfact;}
 	else {$aw=""; $id6=""; $id8="";}
-	//	
-	
+	//
+
 	if ($_SESSION['codi_cistella'] != 'in')
 	{
 		$gvis=0;
 	}
-	
+
 	if ($gvis==0)
 	{
 		$readonly="readonly";
@@ -36,12 +36,12 @@ $user = $_SESSION['user'];
 		$sty="padding:4px 0px; height: 20px;";
 		$intronovafam="";
 	}
-	else 
+	else
 	{
 		$readonly="";
 		$button='<button class="button button button--save button--animated" name="acceptar" type="submit">Aceptar <i class="fa fa-check" aria-hidden="true"></i></button>';
 		$sty="";
-		$intronovafam='<button class="button button--animated pull-right" type="button"  
+		$intronovafam='<button class="button button--animated pull-right" type="button"
 		onClick="javascript:window.location = \'cistella_mes.php?id='.$gprodref.'&id3='.$gdata.'&id4='.$gcat.'&id5='
 		.$gvis.'&id6='.$gproces.'&id7='.$ggrup.'\'">Añadir nueva familia <i class="fa fa-plus" aria-hidden="true"></i></button>';
 	}
@@ -50,15 +50,15 @@ $user = $_SESSION['user'];
 	$gbd_data=$anytdx."-".$mestdx."-".$mdiatdx;
 
 	include 'config/configuracio.php';
-	
+
 	/// Busquem nomprod i nomprov a partir de prodref ////
 	$query0= "SELECT nom, proveidora FROM productes WHERE ref='$gprodref'";
-	$result0=mysql_query($query0);
+	$result0=mysqli_query($conn,$query0);
 	if (!$result0) { die("Query0 to show fields from table failed");}
 
-	list($gnomprod,$gprov)=mysql_fetch_row($result0);
+	list($gnomprod,$gprov)=mysqli_fetch_row($result0);
 	///////////
-	
+
 	//////////////////////////////////////////////////
 	//// Si existeix la variable POST procedent de cistella_mes.php ///
 	/// vol dir que volem afegir una família per aquest producte en aquest procés///
@@ -67,35 +67,35 @@ $user = $_SESSION['user'];
 	/// Inserta una nova linia a comanda linia ///
 	/// Si no existeix comanda ///
 	/// Crea comanda de la família per aquest procés i la línia corresponent al producte ///
-	///////////////////////////////////////////////// 
+	/////////////////////////////////////////////////
 	if ($paddfam)
-	{		
-		if($pnum!="") 
-		{		
+	{
+		if($pnum!="")
+		{
 			$query2 = "INSERT INTO comanda_linia (numero, ref, quantitat, cistella)
 				VALUES ('$pnum', '$gprodref', '1', '0')";
-			mysql_query($query2) or die('Error, insert query2 failed');
+			mysqli_query($conn,$query2) or die('Error, insert query2 failed');
 		}
-		else 
+		else
 		{
 			$query3 = "INSERT INTO comanda ( `usuari` , `proces`, `grup`, `sessionid` , `data` )
 				VALUES ('$paddfam', '$gproces', '$ggrup', '$sessionid', '$gbd_data')";
-			mysql_query($query3) or die('Error, insert query3 failed');
-			$inumcmda=mysql_insert_id(); 		
+			mysqli_query($conn,$query3) or die('Error, insert query3 failed');
+			$inumcmda=mysqli_insert_id();
 
 			$query4 = "INSERT INTO comanda_linia (numero, ref, quantitat, cistella)
 				VALUES ('$inumcmda', '$gprodref', '1', '0')";
-			mysql_query($query4) or die('Error, insert query4 failed'); 	
-		}	
-	}	
-	
+			mysqli_query($conn,$query4) or die('Error, insert query4 failed');
+		}
+	}
+
 ///Inici html///
 ?>
 
 <html lang="es">
 	<head>
-		<?php include 'head.php'; ?>						
-		<title>aplicoop - editar pedido / producto</title>		
+		<?php include 'head.php'; ?>
+		<title>aplicoop - editar pedido / producto</title>
 	</head>
 
 <script language="javascript" type="text/javascript">
@@ -118,14 +118,14 @@ x[i] = document.getElementById("num"+i).value;
 nom[i]= document.getElementById("nom"+i).value;
 
 if (isNaN(x[i])) {
-alert ('A ' + nom[i] + ': només s/accepten numeros i el punt decimal'); 
+alert ('A ' + nom[i] + ': només s/accepten numeros i el punt decimal');
 document.getElementById("num"+i).focus();
 return false;
 break;
 }
 
 if (x[i]>=100 || x[i]<0) {
-alert ('A ' + nom[i] + ': el numero ha de ser superior a 0 e inferior a 100'); 
+alert ('A ' + nom[i] + ': el numero ha de ser superior a 0 e inferior a 100');
 document.getElementById("num"+i).focus();
 return false;
 break;
@@ -169,30 +169,30 @@ return true;
 
 <?php
 	////Busquem dades sobre el producte en qüestió////
-	$query= "SELECT unitat,preusi,iva,marge,descompte 
-	FROM productes 
+	$query= "SELECT unitat,preusi,iva,marge,descompte
+	FROM productes
 	WHERE ref='$gprodref'";
-	$result=mysql_query($query);
+	$result=mysqli_query($conn,$query);
 	if (!$result) { die("Query to show fields from table failed");}
 
-	list($unitat,$preusi,$iva,$marge,$descompte)=mysql_fetch_row($result);
+	list($unitat,$preusi,$iva,$marge,$descompte)=mysqli_fetch_row($result);
 	/// el pvp sense iva -pvpsi- és el preu més el marge menys el descompte ///
 	/// el pvp amb iva -pvp- el el pvpsi més l'iva ///
 	$pvpsi=$preusi*(1+$marge);
 	$pvpsi=sprintf("%01.2f", $pvpsi);
 	$pvp=$pvpsi*(1+$iva);
 	$pvp=sprintf("%01.2f", $pvp);
-	/// marge, iva i descompte els visualitzem en % /// 
+	/// marge, iva i descompte els visualitzem en % ///
 	$vis_marge=$marge*100;
 	$vis_iva=$iva*100;
 	$vis_descompte=$descompte*100;
-	
+
 ?>
-<form action="cistelles.php?id=<?php echo $gprodref.'&id2='.$gdata.'&id3='.$gproces.'&id4='.$ggrup.'&id5='.$gvis.$id6; ?>#<?php echo $gcat; ?>" 
+<form action="cistelles.php?id=<?php echo $gprodref.'&id2='.$gdata.'&id3='.$gproces.'&id4='.$ggrup.'&id5='.$gvis.$id6; ?>#<?php echo $gcat; ?>"
  method="post" name="frmComanda" id="frmComanda"   onSubmit="return validate_form();" >
 
 <div class="alert alert--info" style="position: relative">
-	<div>PVP sin iva: <?php echo $pvpsi; ?> €/<?php echo $unitat; ?> 
+	<div>PVP sin iva: <?php echo $pvpsi; ?> €/<?php echo $unitat; ?>
 		<span style="color: grey;">[Precio:<?php echo $preusi; ?>]+[Margen:<?php echo $vis_marge; ?>%]</span>
 	</div>
 	<div>
@@ -216,17 +216,17 @@ return true;
 
 <?php
 
-	$taula3 = "SELECT cl.numero, c.usuari, cl.ref, cl.quantitat, cl.cistella 
+	$taula3 = "SELECT cl.numero, c.usuari, cl.ref, cl.quantitat, cl.cistella
 	FROM comanda_linia AS cl, comanda AS c
-	WHERE cl.numero=c.numero AND cl.ref='$gprodref' AND c.data='$gbd_data' 
+	WHERE cl.numero=c.numero AND cl.ref='$gprodref' AND c.data='$gbd_data'
 	AND c.proces='$gproces' AND c.grup='$ggrup' ".$aw."
 	ORDER BY c.usuari";
-	
-	$result3 = mysql_query($taula3);
-	if (!$result3) {die('Invalid query3: ' . mysql_error());}
+
+	$result3 = mysqli_query($conn,$taula3);
+	if (!$result3) {die('Invalid query3: ' . mysqli_error($conn));}
 
 	$i=0;
-	while(list($numero,$familia,$p,$quantitat,$cistella)=mysql_fetch_row($result3))
+	while(list($numero,$familia,$p,$quantitat,$cistella)=mysqli_fetch_row($result3))
 	{
 
 ?>
@@ -237,7 +237,7 @@ return true;
 <td align="center"><?php echo $quantitat; ?></td>
 
 <td align="center">
-		<input align="right" name="num[]" id="num<?php echo $i; ?>" type="TEXT" maxlength="7" size="5" 
+		<input align="right" name="num[]" id="num<?php echo $i; ?>" type="TEXT" maxlength="7" size="5"
 		value="<?php echo $cistella; ?>" <?php echo $readonly; ?> >
     <input type="hidden" name="nom[]" id="nom<?php echo $i; ?>" value="<?php echo $familia; ?>">
     <input type="hidden" name="numcmda[]" id="numcmda<?php echo $i; ?>" value="<?php echo $numero; ?>">
@@ -251,10 +251,10 @@ return true;
 ?>
 </table>
 <div class="u-text-center u-mt-2 u-mb-1">
-<?php 
+<?php
 	if ($gvis=='1')
 	{
-		echo $button; 		
+		echo $button;
 	}
 ?>
 </div>
@@ -270,8 +270,8 @@ return true;
 
 <?php
 include 'config/disconect.php';
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>

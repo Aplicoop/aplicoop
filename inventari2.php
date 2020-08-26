@@ -51,11 +51,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 $color = array("#F0C900", "#00b2ff", "orange", "#b20000", "#14e500", "red", "#8524ba");
                 $cc = 0;
                 $sel = "SELECT nom FROM proveidores ORDER BY nom";
-                $result = mysql_query($sel);
+                $result = mysqli_query($conn,$sel);
                 if (!$result) {
-                    die('Invalid query: ' . mysql_error());
+                    die('Invalid query: ' . mysqli_error($conn));
                 }
-                while ($nomprov = mysql_fetch_array($result)) {
+                while ($nomprov = mysqli_fetch_array($result)) {
                     print ('<a id="color" href="#' . $nomprov[0] . '"
 		style="background: ' . $color[$cc] . '; margin-bottom: 5px; margin-right: 3px;
 		white-space: -moz-pre-wrap; word-wrap: break-word;">
@@ -76,12 +76,12 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 $comp = "";
                 $nova = "";
                 $sel2 = "SELECT nom, unitat, proveidora, estoc FROM productes ORDER BY proveidora,nom";
-                $result2 = mysql_query($sel2);
+                $result2 = mysqli_query($conn,$sel2);
                 if (!$result2) {
-                    die('Invalid query result2: ' . mysql_error());
+                    die('Invalid query result2: ' . mysqli_error($conn));
                 }
 
-                while (list($prod, $unitat, $prov, $estoc) = mysql_fetch_array($result2)) {
+                while (list($prod, $unitat, $prov, $estoc) = mysqli_fetch_array($result2)) {
                     if ($estoc <= 0) {
                         $class = 'style="color: red;"';
                     } else {

@@ -25,7 +25,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             </p>
             <p class="h1" style="background: #a74fd7; text-align: left; padding-left: 20px;">
                 Introduir notes a l'escriptori
-<span style="display: inline; float: right; text-align: center; vertical-align: middle; 
+<span style="display: inline; float: right; text-align: center; vertical-align: middle;
 padding: 2px 50px 2px 0px;">
 <input class="button2" style="width:150px;" type="button" value="CREAR NOTA NOVA"
        onClick="javascript:window.location = 'editnota.php'">
@@ -46,12 +46,12 @@ padding: 2px 50px 2px 0px;">
 
                     $taula = "SELECT numero,nom,tipus,caducitat FROM notescrip";
 
-                    $result = mysql_query($taula);
+                    $result = mysqli_query($conn,$taula);
                     if (!$result) {
-                        die('Invalid query: ' . mysql_error());
+                        die('Invalid query: ' . mysqli_error($conn));
                     }
 
-                    while (list($num, $nom, $tipus, $caduc) = mysql_fetch_row($result)) {
+                    while (list($num, $nom, $tipus, $caduc) = mysqli_fetch_row($result)) {
 
                         list($any, $mes, $dia) = explode("-", $caduc);
                         $caduc2 = $dia . "-" . $mes . '-' . $any;

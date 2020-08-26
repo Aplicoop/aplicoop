@@ -48,11 +48,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 $query = "UPDATE proces_linia
 					SET ordre='" . $gordre . "'
 					WHERE proces='" . $gproc . "' AND grup='" . $ggrup . "' AND ordre='" . $gordreup . "' ";
-                mysql_query($query) or die('Error, insert query failed');
+                mysqli_query($conn,$query) or die('Error, insert query failed');
                 $query2 = "UPDATE proces_linia
 					SET ordre='" . $gordreup . "'
 					WHERE proces='" . $gproc . "' AND grup='" . $ggrup . "' AND categoria='" . $gcat . "' ";
-                mysql_query($query2) or die('Error, insert query2 failed');
+                mysqli_query($conn,$query2) or die('Error, insert query2 failed');
             }
 
             if ($updown == 'down') {
@@ -60,25 +60,25 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 $query = "UPDATE proces_linia
 					SET ordre='" . $gordre . "'
 					WHERE proces='" . $gproc . "' AND grup='" . $ggrup . "' AND ordre='" . $gordredown . "' ";
-                mysql_query($query) or die('Error, insert query failed');
+                mysqli_query($conn,$query) or die('Error, insert query failed');
 
                 $query2 = "UPDATE proces_linia
 					SET ordre='" . $gordredown . "'
 					WHERE proces='" . $gproc . "' AND grup='" . $ggrup . "' AND categoria='" . $gcat . "' ";
-                mysql_query($query2) or die('Error, insert query2 failed');
+                mysqli_query($conn,$query2) or die('Error, insert query2 failed');
             }
 
             if ($gactiu != "") {
                 $query3 = "UPDATE proces_linia
 				SET actiu='" . $gactiu . "'
 				WHERE proces='" . $gproc . "' AND grup='" . $ggrup . "' AND categoria='" . $gcat . "' ";
-                mysql_query($query3) or die('Error, insert query3 failed');
+                mysqli_query($conn,$query3) or die('Error, insert query3 failed');
             }
 
             if ($elim != "") {
                 $query4 = "DELETE FROM proces_linia
 				WHERE proces='" . $gproc . "' AND grup='" . $ggrup . "' AND categoria='" . $gcat . "' ";
-                mysql_query($query4) or die('Error, insert query4 failed');
+                mysqli_query($conn,$query4) or die('Error, insert query4 failed');
             }
 
             ?>
@@ -100,32 +100,32 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                     $select8 = "SELECT MAX(ordre) FROM proces_linia
 	WHERE proces='" . $gproc . "' AND grup='" . $ggrup . "' ";
 
-                    $query8 = mysql_query($select8);
+                    $query8 = mysqli_query($conn,$select8);
 
                     if (!$query8) {
-                        die('Invalid query8: ' . mysql_error());
+                        die('Invalid query8: ' . mysqli_error($conn));
                     }
 
-                    list($max) = mysql_fetch_row($query8);
+                    list($max) = mysqli_fetch_row($query8);
 
                     $select5 = "SELECT categoria,actiu FROM proces_linia
 	WHERE proces='" . $gproc . "' AND grup='" . $ggrup . "'
 	ORDER BY ordre ";
 
-                    $query5 = mysql_query($select5);
+                    $query5 = mysqli_query($conn,$select5);
 
                     if (!$query5) {
-                        die('Invalid query5: ' . mysql_error());
+                        die('Invalid query5: ' . mysqli_error($conn));
                     }
 
                     $k = 1;
-                    while (list($scat, $sactiu) = mysql_fetch_row($query5)) {
+                    while (list($scat, $sactiu) = mysqli_fetch_row($query5)) {
                         $ord = $k;
 
                         $query7 = "UPDATE proces_linia
 			  SET ordre='" . $ord . "'
 		  	  WHERE proces='" . $gproc . "' AND grup='" . $ggrup . "' AND categoria='" . $scat . "' ";
-                        mysql_query($query7) or die('Error, insert query7 failed');
+                        mysqli_query($conn,$query7) or die('Error, insert query7 failed');
 
                         $checked1 = "";
                         $checked2 = "";

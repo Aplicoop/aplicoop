@@ -13,13 +13,13 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
     $select = "SELECT nom,tipus,tipus2,dia,components,tel1,tel2,email1,email2,nomf,adressf,niff,nota,kuota,fechaalta FROM usuaris WHERE nom='$nom'";
 
-    $query = mysql_query($select);
+    $query = mysqli_query($conn,$select);
 
     if (!$query) {
-        die('Invalid query: ' . mysql_error());
+        die('Invalid query: ' . mysqli_error($conn));
     }
 
-    list($nom, $tip, $tip2, $dia, $components, $tel1, $tel2, $email1, $email2, $nomf, $adressf, $niff, $nota, $kuota, $fechaalta) = mysql_fetch_row($query);
+    list($nom, $tip, $tip2, $dia, $components, $tel1, $tel2, $email1, $email2, $nomf, $adressf, $niff, $nota, $kuota, $fechaalta) = mysqli_fetch_row($query);
 
     ?>
 

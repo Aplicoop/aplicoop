@@ -4,50 +4,50 @@
 	$color2=array("#C0C000","#00b2ff","orange","#b20000","#14e500","red","#8524ba");
 	$cc=0;
 	$sel = "SELECT tipus FROM categoria ORDER BY tipus";
-	$result = mysql_query($sel);
-	if (!$result) {die('Invalid query: ' . mysql_error()); }
-	while (list($cat)= mysql_fetch_row($result))
-	{	
+	$result = mysqli_query($conn,$sel);
+	if (!$result) {die('Invalid query: ' . mysqli_error($conn)); }
+	while (list($cat)= mysqli_fetch_row($result))
+	{
 		$taula2 = "SELECT cl.producte, cl.proveidora, pr.unitat, pr.categoria, c.numero, c.data
 		FROM comanda AS c, comanda_linia AS cl, productes AS pr
-		WHERE c.numero=cl.numero AND cl.producte=pr.nom AND cl.proveidora=pr.proveidora 
+		WHERE c.numero=cl.numero AND cl.producte=pr.nom AND cl.proveidora=pr.proveidora
 		AND c.data='$gbd_data' AND pr.categoria='$cat' ".$aw;
-		$result2 = mysql_query($taula2);
-		if (!$result2) {die('Invalid query2: ' . mysql_error());}
-	
-		if (mysql_num_rows($result2)>0)
+		$result2 = mysqli_query($conn,$taula2);
+		if (!$result2) {die('Invalid query2: ' . mysqli_error($conn));}
+
+		if (mysqli_num_rows($result2)>0)
 		{
-			print ('<a href="#'.$cat.'" id="color" style="background: '.$color2[$cc].'; 
+			print ('<a href="#'.$cat.'" id="color" style="background: '.$color2[$cc].';
 				margin-bottom: 5px; margin-right: 3px; white-space: -moz-pre-wrap; word-wrap: break-word;">
 				<span>'.$cat.'</span></a>');
 				$cc++;
 				if ($cc==7){$cc=0;}
 		}
 	}
-	echo'</div>	
+	echo'</div>
 	<div class="contenidor_fac" style="border: 1px solid green; max-height: 350px; overflow: scroll; overflow-x:hidden;">';
 	$cc=0;
 	$sel = "SELECT tipus FROM categoria ORDER BY tipus";
-	$result = mysql_query($sel);
-	if (!$result) {die('Invalid query: ' . mysql_error()); }
-	while (list($cat)= mysql_fetch_row($result))
-	{	
-	
+	$result = mysqli_query($conn,$sel);
+	if (!$result) {die('Invalid query: ' . mysqli_error($conn)); }
+	while (list($cat)= mysqli_fetch_row($result))
+	{
+
 	$taula2 = "SELECT cl.producte, cl.proveidora, pr.unitat, pr.categoria, c.numero, c.data, SUM(cl.quantitat) AS sum, SUM(cl.cistella) AS csum
 	FROM comanda AS c, comanda_linia AS cl, productes AS pr
-	WHERE c.numero=cl.numero AND cl.producte=pr.nom AND cl.proveidora=pr.proveidora AND c.data='$gbd_data' 
+	WHERE c.numero=cl.numero AND cl.producte=pr.nom AND cl.proveidora=pr.proveidora AND c.data='$gbd_data'
 	AND c.proces='$gproces' AND c.grup='$ggrup' AND pr.categoria='$cat' ".$aw."
 	GROUP BY cl.producte, cl.proveidora
 	ORDER BY pr.categoria, pr.proveidora, cl.producte";
 
-	$result2 = mysql_query($taula2);
-	if (!$result2) {die('Invalid query2: ' . mysql_error());}
-	
-	if (mysql_num_rows($result2)>0)
+	$result2 = mysqli_query($conn,$taula2);
+	if (!$result2) {die('Invalid query2: ' . mysqli_error($conn));}
+
+	if (mysqli_num_rows($result2)>0)
 	{
 		print ('<a name="'.$cat.'"></a>
 	  	<p class="h1"
-		style="background: '.$color2[$cc].'; font-size:14px; text-align: left; 
+		style="background: '.$color2[$cc].'; font-size:14px; text-align: left;
 		height: 20px; padding-left: 20px; clear: left;">'.$cat.'</p>');
 		echo '<table width="80%" align="center" valign="middle" cellpadding="5" cellspacing="5">';
 		echo "<tr class='cos_majus'><td width='60%'>Producte</td>";
@@ -55,24 +55,24 @@
 		echo "<td width='20%' align='center'>Total cistella</td>";
 		echo "</tr>";
 
-		while (list($nom_prod,$nom_prov,$uni,$t,$n,$d,$sum,$csum)=mysql_fetch_row($result2))
+		while (list($nom_prod,$nom_prov,$uni,$t,$n,$d,$sum,$csum)=mysqli_fetch_row($result2))
 		{
 		$suma = sprintf("%01.2f", $sum);
 		$csuma= sprintf("%01.2f", $csum);
 		$color="";
-		if ($csuma!=0) 
+		if ($csuma!=0)
 			{
 			$color="style='color: ".$color2[$cc].";'";
 			}
 		$estil="";
-		if ($csuma!=0 AND $csuma<>$suma) 
+		if ($csuma!=0 AND $csuma<>$suma)
 			{
 			$color="";
 			$estil="style='color: red;'";
   			}
-  		
+
 		$link="<a id='color2' href='cistella_prod.php?id=".$nom_prod."&id2=".$nom_prov."&id3=".$gdata."&id4=".$cat."&id5=".$gvis."&id6=".$gproces."&id7=".$ggrup.$id8."'>".$nom_prod."-".$nom_prov."</a>";
-		
+
 ?>
 
 <tr class='cos' <?php echo $color; ?>>
@@ -88,6 +88,6 @@
 	if ($cc==7){$cc=0;}
 	}
 }
-	
+
 ?>
 </div>

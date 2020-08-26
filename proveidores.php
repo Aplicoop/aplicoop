@@ -25,7 +25,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             </p>
             <p class="h1" style="background: #990000; text-align: left; padding-left: 20px;">
                 Proveïdores
-<span style="display: inline; float: right; text-align: center; vertical-align: middle; 
+<span style="display: inline; float: right; text-align: center; vertical-align: middle;
 padding: 2px 50px 2px 0px;">
 <input class="button2" style="width: 180px;" type="button" value="CREAR NOVA PROVEIDORA"
        onClick="javascript:window.location = 'createprov.php'">
@@ -41,13 +41,13 @@ padding: 2px 50px 2px 0px;">
 
                         $taula = "SELECT nom FROM proveidores ORDER BY nom";
 
-                        $result = mysql_query($taula);
+                        $result = mysqli_query($conn,$taula);
                         if (!$result) {
-                            die('Invalid query: ' . mysql_error());
+                            die('Invalid query: ' . mysqli_error($conn));
                         }
 
                         $i = 0;
-                        while (list($nomprov) = mysql_fetch_row($result)) {
+                        while (list($nomprov) = mysqli_fetch_row($result)) {
 
                             echo "<td width='33%' align='center'><a href='editprov.php?id=" . $nomprov . "'>" . $nomprov . " </a></td>";
                             $i++;

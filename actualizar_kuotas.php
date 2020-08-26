@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 
 if ($_SESSION['image_is_logged_in'] == 'true') {
@@ -10,12 +10,12 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
     $pyear = $_GET['year'];
     $pmes = $_GET['month'];
-    
+
     include 'config/configuracio.php';
 
     $sel = "SELECT tipus FROM usuaris WHERE nom='$user'";
-    $query = mysql_query($sel) or die ('query failed: ' . mysql_error());
-    list($priv) = mysql_fetch_row($query);
+    $query = mysqli_query($conn,$sel) or die ('query failed: ' . mysqli_error($conn));
+    list($priv) = mysqli_fetch_row($query);
 
 ///sólo entramos si somos "super"////
 
@@ -44,22 +44,22 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
         $concepto = "Kuota ".$pmes.'/'.$pyear;
         $notas = "hecho desde economia kidekoop";
         $query_check = "SELECT familia FROM moneder WHERE concepte = '$concepto'";
-        $result = mysql_query($query_check);
-        if (mysql_num_rows($result)==0) {
+        $result = mysqli_query($conn,$query_check);
+        if (mysqli_num_rows($result)==0) {
         	echo "<p>Aplicar la cuota del mes en los monederos para el més " . $pmes . "/" . $pyear ."</p>";
 
 	        //Kuotak
 	        echo "<p>Kuotas del més : ". $pmes . "/" . $pyear . "</p>";
 	        $query = "SELECT nom,IF(year(usuaris.fechaalta)=" . $pyear . " AND month((usuaris.fechaalta))=" . $pmes . ",'20.00',usuaris.kuota) FROM `usuaris` WHERE tipus2='actiu' AND kuota != 0";
-	        $result = mysql_query($query);
+	        $result = mysqli_query($conn,$query);
 			if (!$result) {
-	            die('Invalid query: ' . mysql_error());
+	            die('Invalid query: ' . mysqli_error($conn));
 	            }
-	        while (list($socio,$kuota) = mysql_fetch_row($result)) {
+	        while (list($socio,$kuota) = mysqli_fetch_row($result)) {
 	        	echo $socio . " " . $kuota . "<br>";
 	        	$query2 = "INSERT INTO moneder
 	 			VALUES ('" . $session . "','" . $user . "','" . $data . "','" . $socio . "','" . $concepto . "','" . -$kuota . "','" . $notas . "')";
-	 			mysql_query($query2) or die('Error, insert query2 failed');
+	 			mysqli_query($conn,$query2) or die('Error, insert query2 failed');
 			}
 		}
 		else {

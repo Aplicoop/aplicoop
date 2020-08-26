@@ -12,7 +12,7 @@ include 'config/configuracio.php';
 
 $sql2 = "UPDATE session SET date2='$timefise'
   		   WHERE sessionid='$sessionid'";
-mysql_query($sql2) or die('Query2 failed. ' . mysql_error());
+mysqli_query($conn,$sql2) or die('Query2 failed. ' . mysqli_error($conn));
 
 header('Location: index.php');
 

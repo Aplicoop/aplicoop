@@ -97,20 +97,20 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
 // processos oberts//
     $sel = "SELECT dia FROM usuaris	WHERE nom='$user'";
-    $result = mysql_query($sel);
+    $result = mysqli_query($conn,$sel);
     if (!$result) {
-        die('Invalid query: ' . mysql_error());
+        die('Invalid query: ' . mysqli_error($conn));
     }
-    list ($grup) = mysql_fetch_row($result);
+    list ($grup) = mysqli_fetch_row($result);
 
     $sel2 = "SELECT nom, tipus, data_inici, data_fi, periode, dia_recollida, dia_tall, hora_tall
 	 FROM processos WHERE grup='$grup' AND actiu='actiu'";
-    $result2 = mysql_query($sel2);
+    $result2 = mysqli_query($conn,$sel2);
     if (!$result2) {
-        die('Invalid query2: ' . mysql_error());
+        die('Invalid query2: ' . mysqli_error($conn));
     }
 
-    while (list($proces, $tipus, $datai, $dataf, $periode, $diare, $diat, $horat) = mysql_fetch_row($result2)) {
+    while (list($proces, $tipus, $datai, $dataf, $periode, $diare, $diat, $horat) = mysqli_fetch_row($result2)) {
         $time_avui = time();
         list($yi, $mi, $di) = explode('-', $datai);
         $time_datai = mktime(0, 0, 0, $mi, $di, $yi);
@@ -123,11 +123,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             $bd_dataf = date("Y-m-d", $time_dataf);
             $sel3 = "SELECT numero	FROM comanda
 			WHERE usuari='$user' AND proces='$proces' AND data<='$dataf' AND data>='$datai' ";
-            $result3 = mysql_query($sel3);
+            $result3 = mysqli_query($conn,$sel3);
             if (!$result3) {
-                die('Invalid query3: ' . mysql_error());
+                die('Invalid query3: ' . mysqli_error($conn));
             }
-            list ($numcmda1) = mysql_fetch_row($result3);
+            list ($numcmda1) = mysqli_fetch_row($result3);
 
             if ($numcmda1 != "") {
                 $nota11 = $proces . ': tens la comanda numero ' . $numcmda1 . '
@@ -186,13 +186,13 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             $ver_diare = date("d-m-Y", $time_diare);
 
             $sel3 = "SELECT numero
-			FROM comanda 
+			FROM comanda
 			WHERE usuari='$user' AND proces='$proces' AND data='$bd_diare'";
-            $result3 = mysql_query($sel3);
+            $result3 = mysqli_query($conn,$sel3);
             if (!$result3) {
-                die('Invalid query3: ' . mysql_error());
+                die('Invalid query3: ' . mysqli_error($conn));
             }
-            list ($numcmda1) = mysql_fetch_row($result3);
+            list ($numcmda1) = mysqli_fetch_row($result3);
 
             if ($numcmda1 != "") {
                 $nota11 = $proces . ': tens la comanda numero ' . $numcmda1 . ' per recollir el ' . $ver_diare . '.
@@ -211,18 +211,18 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 // Actualització check1 despres 1 mes cistelles //
     $sel4 = "SELECT numero, data2	FROM comanda
 			WHERE usuari='$user' AND check0='1' AND check1='0' AND data2!='0000-00-00'";
-    $result4 = mysql_query($sel4);
+    $result4 = mysqli_query($conn,$sel4);
     if (!$result4) {
-        die('Invalid query4: ' . mysql_error());
+        die('Invalid query4: ' . mysqli_error($conn));
     }
-    while (list ($numero, $data2) = mysql_fetch_row($result4)) {
+    while (list ($numero, $data2) = mysqli_fetch_row($result4)) {
         list($year, $month, $day) = explode('-', $data2);
         $data2v = mktime(0, 0, 0, $month, $day, $year);
         $data_cl = strtotime('+ 1 month', $data2v);
         $ara = time();
         if ($ara > $data_cl) {
             $sel6 = "UPDATE comanda SET check1='1'	WHERE numero='$numero'";
-            $result6 = mysql_query($sel6) or die('Invalid query6: ' . mysql_error());
+            $result6 = mysqli_query($conn,$sel6) or die('Invalid query6: ' . mysqli_error($conn));
             $nota12 .= '<p class="cos_majus" style="color: grey; margin: 5px 10px 0px 10px;">
 			La comanda numero ' . $numero . ' s\'ha validat automàticament.</p>';
         }
@@ -232,14 +232,14 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
     //notes a l'escriptori
     $datacomp = date("Y-m-d");
     $sel2 = "SELECT * FROM notescrip WHERE caducitat>='$datacomp'";
-    $result2 = mysql_query($sel2);
+    $result2 = mysqli_query($conn,$sel2);
     if (!$result2) {
-        die('Invalid query result2: ' . mysql_error());
+        die('Invalid query result2: ' . mysqli_error($conn));
     }
 
     $nota13 = "";
     $nota21 = "";
-    while (list($num, $nom, $text, $tipus, $caduc) = mysql_fetch_row($result2)) {
+    while (list($num, $nom, $text, $tipus, $caduc) = mysqli_fetch_row($result2)) {
         list($any, $mes, $dia) = explode("-", $caduc);
         $caduc2 = $dia . "-" . $mes . '-' . $any;
 
@@ -253,11 +253,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
     // moneder //
     $sel6 = "SELECT SUM(valor) AS total FROM moneder WHERE familia='$user'"; //calcula realmente el total del moneder
-    $result6 = mysql_query($sel6);
+    $result6 = mysqli_query($conn,$sel6);
     if (!$result6) {
-        die('Invalid query6: ' . mysql_error());
+        die('Invalid query6: ' . mysqli_error($conn));
     }
-    list($moneder) = mysql_fetch_row($result6);
+    list($moneder) = mysqli_fetch_row($result6);
     $style = "color: black;";
     if ($moneder <= 0) {
         $style = 'style="text-decoration: blink; color: red;"';
@@ -265,11 +265,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
     //darrers moviments //
     $sel7 = "SELECT data, concepte, valor FROM moneder WHERE familia='$user' ORDER BY data DESC LIMIT 5";
-    $result7 = mysql_query($sel7);
+    $result7 = mysqli_query($conn,$sel7);
     if (!$result7) {
-        die('Invalid query7: ' . mysql_error());
+        die('Invalid query7: ' . mysqli_error($conn));
     }
-    while (list($datam, $concepte, $valor) = mysql_fetch_row($result7)) {
+    while (list($datam, $concepte, $valor) = mysqli_fetch_row($result7)) {
         $datam2 = explode('-', $datam);
         $datamov = $datam2[2] . '-' . $datam2[1] . '-' . $datam2[0];
         if ($valor > 0) {
@@ -289,11 +289,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 	WHERE vist='0' AND (`to`='$user' OR `from`='$user')
 	ORDER BY data DESC
 	LIMIT 20";
-    $result5 = mysql_query($sel5);
+    $result5 = mysqli_query($conn,$sel5);
     if (!$result5) {
-        die('Invalid query5: ' . mysql_error());
+        die('Invalid query5: ' . mysqli_error($conn));
     }
-    while (list($from, $to, $sub, $tex, $datac, $vis) = mysql_fetch_row($result5)) {
+    while (list($from, $to, $sub, $tex, $datac, $vis) = mysqli_fetch_row($result5)) {
 
         $correu_linia .= '<div id="correu_f1"><p><SPAN style="font-weight: bold;"> Tema: </span>' . $sub . '
 		 <SPAN style="font-weight: bold;"> De: </span>' . $from . ' <SPAN style="font-weight: bold;">A: </span>' . $to . '

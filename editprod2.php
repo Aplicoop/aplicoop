@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if ($_SESSION['image_is_logged_in'] == 'true' ) 
+if ($_SESSION['image_is_logged_in'] == 'true' )
 {
 
 	$user = $_SESSION['user'];
@@ -10,7 +10,7 @@ if ($_SESSION['image_is_logged_in'] == 'true' )
 	$gprov = $_GET['id2'];
 	$que = $_GET['id3'];
 
-	
+
 	$pnom=$_POST['nom'];
 	$punitat=$_POST['unitat'];
 	$pprov=$_POST['prov'];
@@ -21,7 +21,7 @@ if ($_SESSION['image_is_logged_in'] == 'true' )
 	$ppreu=$_POST['preu'];
 	$pestoc=$_POST['estoc'];
 	$pnotes=$_POST['notes'];
-	
+
 	include 'config/configuracio.php';
 
 ?>
@@ -47,7 +47,7 @@ var preu = document.getElementById("preu").value;
 
 
 if (nom=="") {
-alert ("T'has deixat el nom en blanc"); 
+alert ("T'has deixat el nom en blanc");
 document.getElementById("nom").focus();
 return false;
 }
@@ -62,16 +62,16 @@ var answer = confirm("T'has deixat unitat buida? \nD'acord: Continuar \nCancelar
 	document.getElementById("unitat").focus();
 	return false;
 	}
-} 
+}
 
 if (prov=="") {
-alert ("No has elegit cap proveïdora"); 
+alert ("No has elegit cap proveïdora");
 document.getElementById("prov").focus();
 return false;
 }
 
 if (cat=="") {
-alert ("No has elegit cap categoria"); 
+alert ("No has elegit cap categoria");
 document.getElementById("tipus").focus();
 return false;
 }
@@ -90,19 +90,19 @@ var answer = confirm("T'has deixat preu buit? \nD'acord: Continuar \nCancelar: T
 
 var illegalChars= /[\<\>\'\;\:\\\/\"\+\!\¡\º\ª\$\|\@\#\%\¬\=\?\¿\{\}\_\[\]]/
 if (nom.match(illegalChars)) {
-   alert ('A nom: només s/accepten lletres, numeros, espai en blanc, punts, comes, guió alt i parentesis'); 
-		document.getElementById("nom").focus();		
+   alert ('A nom: només s/accepten lletres, numeros, espai en blanc, punts, comes, guió alt i parentesis');
+		document.getElementById("nom").focus();
 		return false;
 }
 
 if (isNaN(preu)) {
-alert ('A preu: només s/accepten numeros i el punt decimal'); 
+alert ('A preu: només s/accepten numeros i el punt decimal');
 document.getElementById("preu").focus();
 return false;
 }
 
 if (preu<0) {
-alert ('A preu: el numero ha de ser superior que 0'); 
+alert ('A preu: el numero ha de ser superior que 0');
 document.getElementById("preu").focus();
 return false;
 }
@@ -130,30 +130,30 @@ function dropdownlist(listindex)
 <?php
 
 	$query9= "SELECT tipus FROM categoria ORDER BY tipus";
-	$result9=mysql_query($query9);
+	$result9=mysqli_query($conn,$query9);
 	if (!$result9) { die("Query9 to show fields from table categoria failed");}
-	while (list($jtipus)=mysql_fetch_row($result9))
+	while (list($jtipus)=mysqli_fetch_row($result9))
 	{
 ?>
 		case "<?php echo $jtipus; ?>":
 		document.nouprod.subtipus.options[0]=new Option("elegeix subcategoria","");
 <?php
-		$query8= "SELECT subcategoria FROM subcategoria 
+		$query8= "SELECT subcategoria FROM subcategoria
 		WHERE categoria='".$jtipus."' ORDER BY subcategoria";
-		$result8=mysql_query($query8);
+		$result8=mysqli_query($conn,$query8);
 		if (!$result8) {die("Query8 to show fields from table subcategoria failed");}
 		$i=1;
-		while (list($jsubcat)=mysql_fetch_row($result8))
+		while (list($jsubcat)=mysqli_fetch_row($result8))
 		{
-?>		
+?>
 		document.nouprod.subtipus.options[<?php echo $i; ?>]=new Option("<?php echo $jsubcat; ?>","<?php echo $jsubcat; ?>");
 <?php
 			$i++;
 		}
 ?>
 		break;
-<?php 
-	} 
+<?php
+	}
 ?>
 	}
 return true;
@@ -166,19 +166,19 @@ return true;
 	$supernom=strtoupper($gnom);
 	$head3=" >>><a href='editprod.php?id=".$gnom."&id2=".$gprov."'>editar producte ".$gnom."</a>";
 	$tit='<p class="h1" style="background: #990000; text-align: left; padding-left: 20px;">Editar producte '.$supernom.'</p>';
-	$subtit='Per editar un producte realitza els canvis en la fitxa i clica el botó GUARDAR 
+	$subtit='Per editar un producte realitza els canvis en la fitxa i clica el botó GUARDAR
 	al final per fer-los efectius. Per eliminar un producte clica el boto ELIMINAR.';
 	$formact="editprod.php?id=".$gnom."&id2=".$gprov."&id3=edit";
 	$width="50%";
 	$buteli='<p class="linia_button2" style="background: #990000; text-align: center; vertical-align: middle;">
 				<input class="button2" type="submit" value="GUARDAR">
-				<input class="button2" name="eliminar" type="button" id="eliminar" value="ELIMINAR" 
+				<input class="button2" name="eliminar" type="button" id="eliminar" value="ELIMINAR"
      			onClick="var answer = confirm (\'Estas segur de borrar aquest producte!!\')
 				if (answer)
 					{window.location=\'editprod.php?id='.$gnom.'&id2='.$gprov.'&id3=elim\'}"></p>';
 	if (!$gnom)
 	{
-		$supernom=strtoupper($pnom);		
+		$supernom=strtoupper($pnom);
 		$head3=">>><a href='editprod.php'>crear nou producte</a>";
 		$tit='<p class="h1" style="background: #990000; text-align: left; padding-left: 20px;">Crear nou producte</p>';
 		$subtit='Per crear un nou producte omple el formulari i clica el botó GUARDAR al final.';
@@ -186,16 +186,16 @@ return true;
 		$width="100%";
 		$buteli='<p class="linia_button2" style="background: #990000; padding:4px 0px;
 					height: 20px; text-align: center; vertical-align: middle;">
-					<input class="button2" type="submit" value="GUARDAR"></p>';		
+					<input class="button2" type="submit" value="GUARDAR"></p>';
 	}
 ?>
 
 <body>
 <div class="pagina" style="margin-top: 10px;">
 <div class="contenidor_1" style="border: 1px solid #990000;">
-<p class='path'> 
-><a href='admint.php'>administració</a> 
- >><a class='Estilo2' href='productes.php'>editar, crear, eliminar productes</a> 
+<p class='path'>
+><a href='admint.php'>administració</a>
+ >><a class='Estilo2' href='productes.php'>editar, crear, eliminar productes</a>
 <?php echo $head3; ?>
 </p>
 
@@ -205,11 +205,11 @@ return true;
 
 if ($que=='create')
 {
-	$select= "SELECT nom,proveidora FROM productes 
+	$select= "SELECT nom,proveidora FROM productes
 	WHERE nom='".$pnom."' AND proveidora='".$pprov."'";
-	$query=mysql_query($select);
-	if (!$query) {die('Invalid query: ' . mysql_error());}
-	if (mysql_num_rows($query) == 1) 
+	$query=mysqli_query($conn,$select);
+	if (!$query) {die('Invalid query: ' . mysqli_error($conn));}
+	if (mysqli_num_rows($query) == 1)
    {
    	die
    	("<p class='comment'>El producte ".$pnom." de la proveïdora ".$pprov." ja existeix.</p>");
@@ -218,7 +218,7 @@ if ($que=='create')
  	{
  		$query2= "INSERT INTO productes
  				VALUES ('".$pnom."','".$punitat."','".$pprov."','".$pcat."','".$psubcat."','".$pactiu."','".$ppreu."','0','".$pnotes."')";
-		mysql_query($query2) or die('Error, insert query2 failed');
+		mysqli_query($conn,$query2) or die('Error, insert query2 failed');
 		die ("<p class='comment'>El producte ".$supernom." s'ha introduït correctament a la base de dades:</p>
 			<p class='cos2'>unitat: ".$punitat."</p>
 			<p class='cos2'>proveïdora: ".$pprov."</p>
@@ -232,10 +232,10 @@ if ($que=='create')
 
 if ($que=='edit')
 {
-	$query3= "UPDATE productes SET unitat='".$punitat."',categoria='".$pcat."', 
+	$query3= "UPDATE productes SET unitat='".$punitat."',categoria='".$pcat."',
 	subcategoria='".$psubcat."',actiu='".$pactiu."',preu='".$ppreu."',notes='".$pnotes."'
 	WHERE nom='".$gnom."' AND proveidora='".$gprov."'";
-	mysql_query($query3) or die('Error, insert query3 failed');
+	mysqli_query($conn,$query3) or die('Error, insert query3 failed');
 	die ("<p class='comment'>El producte ".$supernom." ha canviat a les següents dades:</p>
 			<p class='cos2'>unitat: ".$punitat."</p>
 			<p class='cos2'>proveïdora: ".$gprov."</p>
@@ -250,9 +250,9 @@ if ($que=='elim')
 {
 	$query4= "SELECT producte FROM albara_linia
 	WHERE producte='".$gnom."'";
-	$result4 = mysql_query($query4);
-	if (!$result4) {die('Invalid query4: ' . mysql_error());}
-	if (mysql_num_rows($result4) != 0)
+	$result4 = mysqli_query($conn,$query4);
+	if (!$result4) {die('Invalid query4: ' . mysqli_error($conn));}
+	if (mysqli_num_rows($result4) != 0)
 	{
 		die
    	("<p class='comment'>El producte ".$gnom." de la proveïdora ".$gprov." ja ha estat utilitzat.</p>
@@ -260,17 +260,17 @@ if ($que=='elim')
 	}
 	$query5= "SELECT cl.ref, pr.nom FROM comanda_linia AS cl, productes AS pr
 	WHERE cl.ref=pr.ref AND pr.nom='$gnom'";
-	$result5 = mysql_query($query5);
-	if (!$result5) {die('Invalid query5: ' . mysql_error());}
-	if (mysql_num_rows($result5) != 0)
+	$result5 = mysqli_query($conn,$query5);
+	if (!$result5) {die('Invalid query5: ' . mysqli_error($conn));}
+	if (mysqli_num_rows($result5) != 0)
 	{
 		die
    	("<p class='coment'>El producte ".$gnom." de la proveïdora ".$gprov." ja ha estat utilitzat.</p>
    	<p class='comment'>Pots desactivar-lo, però no borrar-lo</p>");
 	}
-	
+
 	$query6= "DELETE FROM productes WHERE nom='".$gnom."' AND proveidora='".$gprov."'";
-	mysql_query($query6) or die('Error, insert query6 failed');
+	mysqli_query($conn,$query6) or die('Error, insert query6 failed');
 	die
    	("<p class='comment'>El producte ".$gnom." de la proveïdora ".$gprov." s'ha eliminat de la base de dades.</p>");
 }
@@ -282,12 +282,12 @@ if ($que=='elim')
 	$readonly="";
 	if ($gnom!="")
 	{
-		$select= "SELECT * FROM productes 
+		$select= "SELECT * FROM productes
 		WHERE nom='".$gnom."' AND proveidora='".$gprov."'";
-		$query=mysql_query($select);
-		if (!$query) {die('Invalid query: ' . mysql_error());}
-    
-		list($nom,$unitat,$proveidora,$tipus,$subtipus,$actiu,$preu,$estoc,$notes)=mysql_fetch_row($query);
+		$query=mysqli_query($conn,$select);
+		if (!$query) {die('Invalid query: ' . mysqli_error($conn));}
+
+		list($nom,$unitat,$proveidora,$tipus,$subtipus,$actiu,$preu,$estoc,$notes)=mysqli_fetch_row($query);
 		$readonly="readonly";
 	}
 
@@ -316,9 +316,9 @@ value="<?php echo $unitat; ?>"></td></tr>
 	{
 	echo '<td><SELECT name="prov" id="prov" size="1" maxlenght="30"><option value="">elegeix proveïdora</option>';
 	$query= "SELECT nom FROM proveidores ORDER BY nom";
-	$result=mysql_query($query);
+	$result=mysqli_query($conn,$query);
 	if (!$result) { die("Query to show fields from table proveidores failed");}
-	while (list($sprov)=mysql_fetch_row($result))
+	while (list($sprov)=mysqli_fetch_row($result))
 	{
 		echo "<option value='".$sprov."'>".$sprov."</option>";
 	}
@@ -328,18 +328,18 @@ value="<?php echo $unitat; ?>"></td></tr>
 </tr>
 
 <tr><td class="cos_majus">Categoria:</td>
-<td><SELECT id="tipus" name="tipus" size="1" maxlenght="30" 
+<td><SELECT id="tipus" name="tipus" size="1" maxlenght="30"
 onChange="javascript: dropdownlist(this.options[this.selectedIndex].value);">
 <option value="">elegeix categoria</option>
 
 <?php
-	
+
 	$query= "SELECT tipus FROM categoria ORDER BY tipus";
-	$result=mysql_query($query);
+	$result=mysqli_query($conn,$query);
 	if (!$result) { die("Query to show fields from table tipus_prod failed");}
-	while (list($stipus)=mysql_fetch_row($result))
+	while (list($stipus)=mysqli_fetch_row($result))
 	{
-		if ($stipus==$tipus) 
+		if ($stipus==$tipus)
 		{
 			echo "<option value='".$stipus."' selected>".$stipus."</option>";
 		}
@@ -383,7 +383,7 @@ if ($estoc!="")
 {
 ?>
 <tr><td class="cos_majus">Estoc:</td>
-<td><input align="right" name="estoc" id="estoc" type="TEXT" maxlength="7" 
+<td><input align="right" name="estoc" id="estoc" type="TEXT" maxlength="7"
 size="5" value="<?php echo $estoc; ?>" readonly>
 </td></tr>
 <?php
@@ -393,7 +393,7 @@ size="5" value="<?php echo $estoc; ?>" readonly>
 <tr><td class="cos_majus">Comentaris:</td>
 <td><input align="right" name="notes" id="notes" type="TEXT" maxlength="255" size="35" value="<?php echo $notes; ?>">
 </td></tr>
-</table> 
+</table>
 
 <?php echo $buteli; ?>
 </div>
@@ -408,8 +408,8 @@ size="5" value="<?php echo $estoc; ?>" readonly>
 
 <?php
 include 'config/disconect.php';
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>

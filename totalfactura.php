@@ -34,9 +34,9 @@ $bd_data=date("Y-m-d", strtotime ($data));
 <div class="pagina" style="margin-top: 10px;">
 
 <div class="contenidor_1" style="border: 1px solid green;">
-<p class='path'> 
-><a href='admint.php'>administració</a> 
->><a href='grups_comandes.php'>grups de comandes i cistelles</a> 
+<p class='path'>
+><a href='admint.php'>administració</a>
+>><a href='grups_comandes.php'>grups de comandes i cistelles</a>
 >>><a href='totalfactura.php?id=<?php echo $data."&id2=".$proces."&id3=".$grup; ?>'>factura total <?php echo $title." ".$proces."-".$grup."-".$data; ?></a>
 </p>
 <p class="h1" style="background: green; text-align: left; padding-left: 20px;">Factura total <?php echo $title." ".$proces."-".$grup."-".$data; ?></p>
@@ -49,71 +49,71 @@ include 'config/configuracio.php';
 $color=array("#F0C900","#00b2ff","orange","#b20000","#14e500","red","#8524ba");
 $cc=0;
 $select3="SELECT nom FROM proveidores";
-$resultat3=mysql_query($select3);
+$resultat3=mysqli_query($conn,$select3);
 if (!$resultat3) {die("Query to show fields from table select3 failed");}
-$numrowsat3=mysql_numrows($resultat3);
-while (list($prove)=mysql_fetch_row($resultat3))
+$numrowsat3=mysqli_num_rows($resultat3);
+while (list($prove)=mysqli_fetch_row($resultat3))
 {
 	$select2="SELECT cl.numero, c.data, cl.ref, pr.nom, pr.proveidora, pr.categoria, cat.estoc
 	FROM comanda_linia AS cl, comanda AS c, productes AS pr, categoria AS cat
 	WHERE c.numero=cl.numero AND cl.ref=pr.ref AND c.proces='$proces' AND pr.categoria=cat.tipus
 	AND c.grup='$grup' AND c.data='$bd_data' AND pr.proveidora='$prove'
 	ORDER BY pr.proveidora, pr.nom";
-	$resultat2=mysql_query($select2);
+	$resultat2=mysqli_query($conn,$select2);
 	if (!$resultat2) {die("Query to show fields from table select2 failed");}
-	$numrowsat2=mysql_numrows($resultat2);
-	
+	$numrowsat2=mysqli_num_rows($resultat2);
+
 	if ($numrowsat2!=0)
 	{
-		print ('<a href="#'.$prove.'" id="color" style="background: '.$color[$cc].'; 
+		print ('<a href="#'.$prove.'" id="color" style="background: '.$color[$cc].';
 				margin-bottom: 5px; margin-right: 3px; white-space: -moz-pre-wrap; word-wrap: break-word;">
 				<span>'.$prove.'</span></a>');
 				$cc++;
 				if ($cc==7){$cc=0;}
 	}
-	mysql_free_result($resultat2);
+	mysqli_free_result($resultat2);
 }
 
 
-echo'</div>	
-<div class="contenidor_fac" style="border: 1px solid green; height: 350px; overflow: scroll; 
+echo'</div>
+<div class="contenidor_fac" style="border: 1px solid green; height: 350px; overflow: scroll;
 overflow-x: hidden;">';
 
 $cc=0;
 $select3="SELECT nom FROM proveidores";
-$resultat3=mysql_query($select3);
+$resultat3=mysqli_query($conn,$select3);
 if (!$resultat3) {die("Query to show fields from table select3 failed");}
-$numrowsat3=mysql_numrows($resultat3);
-while (list($prove)=mysql_fetch_row($resultat3))
+$numrowsat3=mysqli_num_rows($resultat3);
+while (list($prove)=mysqli_fetch_row($resultat3))
 {
 	$select2="SELECT cl.numero, c.data, cl.ref, pr.nom, pr.proveidora, pr.categoria, cat.estoc
 	FROM comanda_linia AS cl, comanda AS c, productes AS pr, categoria AS cat
 	WHERE c.numero=cl.numero AND cl.ref=pr.ref AND c.proces='$proces' AND pr.categoria=cat.tipus
 	AND c.grup='$grup' AND c.data='$bd_data' AND pr.proveidora='$prove'
 	ORDER BY pr.proveidora, pr.nom";
-	$resultat2=mysql_query($select2);
+	$resultat2=mysqli_query($conn,$select2);
 	if (!$resultat2) {die("Query to show fields from table select2 failed");}
-	$numrowsat2=mysql_numrows($resultat2);
-	
+	$numrowsat2=mysqli_num_rows($resultat2);
+
 	if ($numrowsat2!=0)
 	{
-		echo '<a name="'.$prove.'"></a> 
+		echo '<a name="'.$prove.'"></a>
 		<p class="h1"
-		style="background: '.$color[$cc].'; font-size:14px; text-align: left; 
+		style="background: '.$color[$cc].'; font-size:14px; text-align: left;
 		height: 20px; padding-left: 20px; clear: left;">
 		'.$prove.'
 		</p>';
 		$cc++;
 		if ($cc==7){$cc=0;}
 		echo '<table width="100%" align="center" valign="middle" cellpadding="5" cellspacing="5">';
-	
-		$query= "SELECT numero,usuari FROM comanda 
-		WHERE proces='$proces' AND grup='$grup' AND data='$bd_data' 
+
+		$query= "SELECT numero,usuari FROM comanda
+		WHERE proces='$proces' AND grup='$grup' AND data='$bd_data'
 		ORDER BY usuari";
-		$result=mysql_query($query);
+		$result=mysqli_query($conn,$query);
 		if (!$result) { die("Query to show fields from table failed");}
-		$numrows1=mysql_numrows($result);
-		
+		$numrows1=mysqli_num_rows($result);
+
 		// printing table headers
 		echo "<tr class='cos_majus'><td width='25%'>Producte</td>";
 		echo "<td align='center' width='20%'>Total demanat</td>
@@ -125,16 +125,16 @@ while (list($prove)=mysql_fetch_row($resultat3))
 
 		$taula = "SELECT cl.ref, pr.nom, pr.unitat AS uni, SUM(cl.quantitat) AS sum,
 		SUM(cl.cistella) as sum2, cl.preu/(1+pr.marge) AS preusm, SUM(cl.cistella*cl.preu/(1+pr.marge)) AS tpag,
-		cl.iva	
+		cl.iva
 		FROM comanda AS c, comanda_linia AS cl, productes AS pr
-		WHERE c.numero=cl.numero AND cl.ref=pr.ref AND c.proces='$proces' 
+		WHERE c.numero=cl.numero AND cl.ref=pr.ref AND c.proces='$proces'
 		AND c.grup='$grup' AND c.data='$bd_data' AND pr.proveidora='$prove'
 		GROUP BY cl.ref
 		ORDER BY pr.proveidora, pr.nom";
 
-		$result = mysql_query($taula);
-		if (!$result) {die('Invalid query: ' . mysql_error());}
-		while (list($ref,$nomprod,$uni,$sum,$sumc,$preu,$tpag,$iva)=mysql_fetch_row($result))
+		$result = mysqli_query($conn,$taula);
+		if (!$result) {die('Invalid query: ' . mysqli_error($conn));}
+		while (list($ref,$nomprod,$uni,$sum,$sumc,$preu,$tpag,$iva)=mysqli_fetch_row($result))
 		{
 		$preu=sprintf("%01.2f", $preu);
 		$ttpag=$ttpag+$tpag;
@@ -159,7 +159,7 @@ while (list($prove)=mysql_fetch_row($resultat3))
 		echo "<tr><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
 		<td style='cos16' style='font-weight: bold;'>Total</td><td align='right'>".$ttpag."&#8364;</td></tr>
 		<tr><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
-		<td style='cos16' style='font-weight: bold;'>Total iva suportat (aprox)</td><td align='right'>".$ttiva."&#8364;</td></tr>		
+		<td style='cos16' style='font-weight: bold;'>Total iva suportat (aprox)</td><td align='right'>".$ttiva."&#8364;</td></tr>
 		</table>";
 	}
 	$total_final=$total_final+$ttpag;
@@ -183,8 +183,8 @@ Total: <?php echo $total_final; ?>€
 
 <?php
 include 'config/disconect.php';
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>

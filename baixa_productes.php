@@ -20,25 +20,25 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
     <html lang="es">
     <head>
-        <?php include 'head.php'; ?>       
-        <title>aplicoop - baja productos</title>		 
-        
+        <?php include 'head.php'; ?>
+        <title>aplicoop - baja productos</title>
+
     </head>
 
     <body>
     <?php include 'menu.php'; ?>
     <div class="page">
         <div class="container">
-           
+
             <h1 >Activar y dar de baja productos</h1>
-         
+
 
             <?php
             if ($gactiu != "") {
                 $query3 = "UPDATE productes
 			SET actiu='" . $gactiu . "'
 			WHERE ref='" . $gref . "'";
-                mysql_query($query3) or die('Error, insert query3 failed');
+                mysqli_query($conn,$query3) or die('Error, insert query3 failed');
 
                 $pcat = $gpcat;
                 $psubcat = $gpsubcat;
@@ -57,11 +57,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                             <?php
                             $select2 = "SELECT tipus FROM categoria ORDER BY tipus";
-                            $query2 = mysql_query($select2);
+                            $query2 = mysqli_query($conn,$select2);
                             if (!$query2) {
-                                die('Invalid query2: ' . mysql_error());
+                                die('Invalid query2: ' . mysqli_error($conn));
                             }
-                            while (list($scat) = mysql_fetch_row($query2)) {
+                            while (list($scat) = mysqli_fetch_row($query2)) {
                                 if ($pcat == $scat) {
                                     echo '<option value="' . $scat . '" selected>' . $scat . '</option>';
                                 } else {
@@ -84,7 +84,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 				}
 				?>
 
-				
+
 					<SELECT name="subcat" id="subcat" size="1" maxlength="30" <?php echo $dis_sc; ?>
 							onChange="this.form.submit()">
 
@@ -93,11 +93,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 						if ($pcat != "") {
 							$select2 = "SELECT subcategoria FROM subcategoria
 WHERE categoria='" . $pcat . "' ORDER BY subcategoria";
-							$query2 = mysql_query($select2);
+							$query2 = mysqli_query($conn,$select2);
 							if (!$query2) {
-								die('Invalid query2: ' . mysql_error());
+								die('Invalid query2: ' . mysqli_error($conn));
 							}
-							while (list($scat) = mysql_fetch_row($query2)) {
+							while (list($scat) = mysqli_fetch_row($query2)) {
 								if ($psubcat == $scat) {
 									echo '<option value="' . $scat . '" selected>' . $scat . '</option>';
 								} else {
@@ -117,11 +117,11 @@ WHERE categoria='" . $pcat . "' ORDER BY subcategoria";
 
                             <?php
                             $select3 = "SELECT nom FROM proveidores ORDER BY nom";
-                            $query3 = mysql_query($select3);
+                            $query3 = mysqli_query($conn,$select3);
                             if (!$query3) {
-                                die('Invalid query3: ' . mysql_error());
+                                die('Invalid query3: ' . mysqli_error($conn));
                             }
-                            while (list($sprov) = mysql_fetch_row($query3)) {
+                            while (list($sprov) = mysqli_fetch_row($query3)) {
                                 if ($pprov == $sprov) {
                                     echo '<option value="' . $sprov . '" selected>' . $sprov . '</option>';
                                 } else {
@@ -132,9 +132,9 @@ WHERE categoria='" . $pcat . "' ORDER BY subcategoria";
                             </select>
                     </div>
                 </div>
-                    
+
             </div>
-          	   
+
 		</form>
 
             <div class="box" >
@@ -172,18 +172,18 @@ WHERE categoria='" . $pcat . "' ORDER BY subcategoria";
                 print('<tr class="cos_majus">
 			    <td width="80%" class="u-text-semibold">Producto</td>
                 <td width="202%" class="u-text-semibold">Activo</td>
-		
+
 			    </tr>');
 
                 $sel = "SELECT ref,nom,proveidora,actiu FROM productes " . $where . " ORDER BY nom";
-                $result = mysql_query($sel);
+                $result = mysqli_query($conn,$sel);
                 if (!$result) {
-                    die('Invalid query: ' . mysql_error());
+                    die('Invalid query: ' . mysqli_error($conn));
                 }
 
                 $i = 0;
                 $k = 0;
-                while (list($ref, $nomprod, $nomprov, $actiu) = mysql_fetch_row($result)) {
+                while (list($ref, $nomprod, $nomprov, $actiu) = mysqli_fetch_row($result)) {
                     $checked1 = "";
                     $checked2 = "";
                     if ($actiu == "actiu") {
@@ -191,7 +191,7 @@ WHERE categoria='" . $pcat . "' ORDER BY subcategoria";
                     } else {
                         $checked2 = "checked";
                     }
-                    
+
                     ?>
                     <tr>
                         <td class="cos"><?php echo $nomprod; ?></td>
@@ -201,7 +201,7 @@ WHERE categoria='" . $pcat . "' ORDER BY subcategoria";
                                     id="actiu<?php echo $k; ?>" <?php echo $checked1; ?>
                                     onClick="javascript:window.location = 'baixa_productes.php?id=<?php echo $ref; ?>&id3=actiu&id4=<?php echo $pcat; ?>&id5=<?php echo $psubcat; ?>&id6=<?php echo $pprov; ?>';">
                             </label>
-                            <label class="u-ml-1">                                    
+                            <label class="u-ml-1">
                                 no&nbsp;<input type="radio" name="actiu<?php echo $k; ?>" value="baixa"
                                     id="actiu<?php echo $k; ?>" <?php echo $checked2; ?>
                                     onClick="javascript:window.location = 'baixa_productes.php?id=<?php echo $ref; ?>&id3=baixa&id4=<?php echo $pcat; ?>&id5=<?php echo $psubcat; ?>&id6=<?php echo $pprov; ?>';">
@@ -210,9 +210,9 @@ WHERE categoria='" . $pcat . "' ORDER BY subcategoria";
                     </tr>
                     <?php
 
-                   
+
                     $k++;
-                   
+
                 }
                 print ('</table></div>');
 
@@ -220,7 +220,7 @@ WHERE categoria='" . $pcat . "' ORDER BY subcategoria";
                 <p class="alert alert--info" >
                     Para activar o desactivar productos pulsa el botón correspondiente y se aplicará automáticamente.
                     Puedes buscar productos por categoría y / o por proveedor.
-                    Por defecto aparecen todos los productos ordenados por orden alfabético.    
+                    Por defecto aparecen todos los productos ordenados por orden alfabético.
                 </p>
 
             </div>

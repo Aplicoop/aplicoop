@@ -16,8 +16,8 @@
 <div class="pagina" style="margin-top: 10px;">
 
 <div class="contenidor_1" style="border: 1px solid black;">
-<p class='path'> 
-><a href='admint.php'>administració</a> 
+<p class='path'>
+><a href='admint.php'>administració</a>
 </p>
 <p class="h1" style="background: black; text-align: left; padding-left: 20px;">
 Despesa famílies per proveïdors 2010
@@ -31,71 +31,71 @@ include 'config/configuracio.php';
 $color=array("#F0C900","#00b2ff","orange","#b20000","#14e500","red","#8524ba");
 $cc=0;
 $select3="SELECT nom FROM proveidores";
-$resultat3=mysql_query($select3);
+$resultat3=mysqli_query($conn,$select3);
 if (!$resultat3) {die("Query to show fields from table select3 failed");}
-$numrowsat3=mysql_numrows($resultat3);
-while (list($prove)=mysql_fetch_row($resultat3))
+$numrowsat3=mysqli_num_rows($resultat3);
+while (list($prove)=mysqli_fetch_row($resultat3))
 {
 	$select2="SELECT cl.numero, c.data, cl.ref, pr.nom, pr.proveidora
 	FROM comanda_linia AS cl, comanda AS c, productes AS pr
 	WHERE c.numero=cl.numero AND pr.ref=cl.ref
 	AND c.data>='2010-01-01' AND c.data<'2011-01-01' AND pr.proveidora='$prove'
 	ORDER BY pr.proveidora, pr.nom";
-	$resultat2=mysql_query($select2);
+	$resultat2=mysqli_query($conn,$select2);
 	if (!$resultat2) {die("Query to show fields from table select2 failed");}
-	$numrowsat2=mysql_numrows($resultat2);
-	
+	$numrowsat2=mysqli_num_rows($resultat2);
+
 	if ($numrowsat2!=0)
 	{
-		print ('<a href="#'.$prove.'" id="color" style="background: '.$color[$cc].'; 
+		print ('<a href="#'.$prove.'" id="color" style="background: '.$color[$cc].';
 				margin-bottom: 5px; margin-right: 3px; white-space: -moz-pre-wrap; word-wrap: break-word;">
 				<span>'.$prove.'</span></a>');
 				$cc++;
 				if ($cc==7){$cc=0;}
 	}
-	mysql_free_result($resultat2);
+	mysqli_free_result($resultat2);
 }
 
 
-echo'</div>	
-<div class="contenidor_fac" style="border: 1px solid black; height: 350px; overflow: scroll; 
+echo'</div>
+<div class="contenidor_fac" style="border: 1px solid black; height: 350px; overflow: scroll;
 overflow-x: hidden;">';
 
 $cc=0;
 $select3="SELECT nom FROM proveidores";
-$resultat3=mysql_query($select3);
+$resultat3=mysqli_query($conn,$select3);
 if (!$resultat3) {die("Query to show fields from table select3 failed");}
-$numrowsat3=mysql_numrows($resultat3);
-while (list($prove)=mysql_fetch_row($resultat3))
+$numrowsat3=mysqli_num_rows($resultat3);
+while (list($prove)=mysqli_fetch_row($resultat3))
 {
 	$select2="SELECT cl.numero, c.data, cl.ref, pr.nom, pr.proveidora
 	FROM comanda_linia AS cl, comanda AS c, productes AS pr
 	WHERE c.numero=cl.numero AND pr.ref=cl.ref
 	AND c.data>='2010-01-01' AND c.data<'2011-01-01' AND pr.proveidora='$prove'
 	ORDER BY pr.proveidora, pr.nom";
-	$resultat2=mysql_query($select2);
+	$resultat2=mysqli_query($conn,$select2);
 	if (!$resultat2) {die("Query to show fields from table select2 failed");}
-	$numrowsat2=mysql_numrows($resultat2);
-	
+	$numrowsat2=mysqli_num_rows($resultat2);
+
 	if ($numrowsat2!=0)
 	{
-		echo '<a name="'.$prove.'"></a> 
+		echo '<a name="'.$prove.'"></a>
 		<p class="h1"
-		style="background: '.$color[$cc].'; font-size:14px; text-align: left; 
+		style="background: '.$color[$cc].'; font-size:14px; text-align: left;
 		height: 20px; padding-left: 20px; clear: left;">
 		'.$prove.'
 		</p>';
 		$cc++;
 		if ($cc==7){$cc=0;}
 		echo '<table width="100%" align="center" valign="middle" cellpadding="5" cellspacing="5">';
-	
-		$query= "SELECT numero,usuari FROM comanda 
+
+		$query= "SELECT numero,usuari FROM comanda
 		WHERE data>='2010-01-01' AND data<'2011-01-01'
 		ORDER BY usuari";
-		$result=mysql_query($query);
+		$result=mysqli_query($conn,$query);
 		if (!$result) { die("Query to show fields from table failed");}
-		$numrows1=mysql_numrows($result);
-		
+		$numrows1=mysqli_num_rows($result);
+
 		// printing table headers
 		echo "<tr class='cos_majus'><td>Producte</td>";
 		echo "<td align='center'>Total demanat</td>
@@ -107,14 +107,14 @@ while (list($prove)=mysql_fetch_row($resultat3))
 		$taula = "SELECT cl.ref, pr.nom, SUM(cl.quantitat) AS sum,
 		SUM(cl.cistella) as sum2, cl.preu, SUM(cl.cistella*cl.preu*(1+cl.iva)*(1-cl.descompte)) as tpag
 		FROM comanda AS c, comanda_linia AS cl, productes AS pr
-		WHERE c.numero=cl.numero AND cl.ref=pr.ref AND c.data>='2010-01-01' 
+		WHERE c.numero=cl.numero AND cl.ref=pr.ref AND c.data>='2010-01-01'
 		AND c.data<'2011-01-01' AND pr.proveidora='$prove'
 		GROUP BY cl.producte
 		ORDER BY cl.proveidora, cl.producte";
 
-		$result = mysql_query($taula);
-		if (!$result) {die('Invalid query: ' . mysql_error());}
-		while (list($ref,$nomprod,$sum,$sumc,$preu,$tpag)=mysql_fetch_row($result))
+		$result = mysqli_query($conn,$taula);
+		if (!$result) {die('Invalid query: ' . mysqli_error($conn));}
+		while (list($ref,$nomprod,$sum,$sumc,$preu,$tpag)=mysqli_fetch_row($result))
 		{
 		$ttpag=$ttpag+$tpag;
 		$tpag=sprintf("%01.2f", $tpag);

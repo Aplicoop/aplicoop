@@ -59,23 +59,23 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                     $color = array("#1abc9c", "#e74c3c", "#34495e", "#b20000", "#9b59b6", "#f1c40f", "#f39c12", "#c0392b", "#2980b9");
                     $cc = 0;
                     $select3 = "SELECT nom FROM proveidores";
-                    $resultat3 = mysql_query($select3);
+                    $resultat3 = mysqli_query($conn,$select3);
                     if (!$resultat3) {
                         die("Query to show fields from table select3 failed");
                     }
-                    $numrowsat3 = mysql_numrows($resultat3);
-                    while (list($prove) = mysql_fetch_row($resultat3)) {
+                    $numrowsat3 = mysqli_num_rows($resultat3);
+                    while (list($prove) = mysqli_fetch_row($resultat3)) {
                         $select2 = "SELECT cl.numero, c.data, cl.ref, pr.nom, pr.proveidora, pr.categoria, cat.estoc
 	FROM comanda_linia AS cl, comanda AS c, productes AS pr, categoria AS cat
-	WHERE c.numero=cl.numero AND cl.ref=pr.ref AND pr.proveidora='$prove' 
-	AND c.proces='$proces' AND pr.categoria=cat.tipus AND c.grup='$grup' 
+	WHERE c.numero=cl.numero AND cl.ref=pr.ref AND pr.proveidora='$prove'
+	AND c.proces='$proces' AND pr.categoria=cat.tipus AND c.grup='$grup'
 	AND c.data='$bd_data' " . $where . "
 	ORDER BY pr.proveidora, pr.nom";
-                        $resultat2 = mysql_query($select2);
+                        $resultat2 = mysqli_query($conn,$select2);
                         if (!$resultat2) {
                             die("Query to show fields from table select2 failed");
                         }
-                        $numrowsat2 = mysql_numrows($resultat2);
+                        $numrowsat2 = mysqli_num_rows($resultat2);
 
                         if ($numrowsat2 != 0) {
                             print ('<a href="#' . $prove . '" id="color" class="link u-text-semibold" style="display:inline-block; margin-right: 1rem; border-bottom: 1px solid transparent; color: ' . $color[$cc] . ';">
@@ -85,7 +85,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                                 $cc = 0;
                             }
                         }
-                        mysql_free_result($resultat2);
+                        mysqli_free_result($resultat2);
                     }
 
 
@@ -93,23 +93,23 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                     $cc = 0;
                     $select3 = "SELECT nom FROM proveidores";
-                    $resultat3 = mysql_query($select3);
+                    $resultat3 = mysqli_query($conn,$select3);
                     if (!$resultat3) {
                         die("Query to show fields from table select3 failed");
                     }
-                    $numrowsat3 = mysql_numrows($resultat3);
-                    while (list($prove) = mysql_fetch_row($resultat3))
+                    $numrowsat3 = mysqli_num_rows($resultat3);
+                    while (list($prove) = mysqli_fetch_row($resultat3))
                     {
                     $select2 = "SELECT cl.numero, c.data, cl.ref, pr.nom, pr.proveidora, pr.categoria, cat.estoc
 	FROM comanda_linia AS cl, comanda AS c, productes AS pr, categoria AS cat
 	WHERE c.numero=cl.numero AND cl.ref=pr.ref AND c.proces='$proces' AND pr.categoria=cat.tipus
 	AND c.grup='$grup' AND c.data='$bd_data' AND pr.proveidora='$prove' " . $where . "
 	ORDER BY pr.proveidora, pr.nom";
-                    $resultat2 = mysql_query($select2);
+                    $resultat2 = mysqli_query($conn,$select2);
                     if (!$resultat2) {
                         die("Query to show fields from table select2 failed");
                     }
-                    $numrowsat2 = mysql_numrows($resultat2);
+                    $numrowsat2 = mysqli_num_rows($resultat2);
 
                     if ($numrowsat2 != 0)
                     {
@@ -122,20 +122,20 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                     echo '<table class="table table-striped table-bordered">';
 
                     $query = "SELECT numero,usuari FROM comanda
-		WHERE proces='$proces' AND grup='$grup' AND data='$bd_data' 
+		WHERE proces='$proces' AND grup='$grup' AND data='$bd_data'
 		ORDER BY usuari";
-                    $result = mysql_query($query);
+                    $result = mysqli_query($conn,$query);
                     if (!$result) {
                         die("Query to show fields from table failed");
                     }
-                    $numrows1 = mysql_numrows($result);
+                    $numrows1 = mysqli_num_rows($result);
 
                     echo "<thead><tr class='u-text-semibold'><td>Producto</td>";
                     echo "<td  class='u-text-semibold u-text-center'>Totales</td>";
 
                     // printing table headers
                     $i = 0;
-                    while (list($numero, $familia) = mysql_fetch_row($result)) {
+                    while (list($numero, $familia) = mysqli_fetch_row($result)) {
                         $fila[] = $numero;
                         echo "<td  class='u-text-semibold u-text-center'>" . ($i + 1) ."<br>" . $familia . " (" . $fila[$i] . ")</td>";
                         $i++;
@@ -144,16 +144,16 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                     $total = $i;
                     $taula = "SELECT cl.ref, pr.nom, pr.unitat, SUM(cl.quantitat) AS sum
 		FROM comanda AS c, comanda_linia AS cl, productes AS pr
-		WHERE c.numero=cl.numero AND pr.ref=cl.ref AND c.proces='$proces' 
+		WHERE c.numero=cl.numero AND pr.ref=cl.ref AND c.proces='$proces'
 		AND c.grup='$grup' AND c.data='$bd_data' AND pr.proveidora='$prove'
 		GROUP BY cl.ref
 		ORDER BY pr.nom";
 
-                    $result = mysql_query($taula);
+                    $result = mysqli_query($conn,$taula);
                     if (!$result) {
-                        die('Invalid query taula: ' . mysql_error());
+                        die('Invalid query taula: ' . mysqli_error($conn));
                     }
-                    while (list($ref, $nomprod, $uni, $sum) = mysql_fetch_row($result))
+                    while (list($ref, $nomprod, $uni, $sum) = mysqli_fetch_row($result))
                     {
 
                     ?>
@@ -170,15 +170,15 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 			WHERE c.proces='$proces' AND c.grup='$grup' AND c.data='$bd_data'
 			AND cl.ref='$ref'
 			ORDER BY c.usuari";
-                        $result2 = mysql_query($taula2);
+                        $result2 = mysqli_query($conn,$taula2);
                         if (!$result2) {
-                            die('Invalid query: ' . mysql_error());
+                            die('Invalid query: ' . mysqli_error($conn));
                         }
 
                         $j = 0;
 
-                        while (list($numcmda, $familia, $nomprod2, $quant) = mysql_fetch_row($result2)) {
-                            $numrows2 = mysql_numrows($result2);
+                        while (list($numcmda, $familia, $nomprod2, $quant) = mysqli_fetch_row($result2)) {
+                            $numrows2 = mysqli_num_rows($result2);
 
                             for ($i = $j; $i <= $numrows1; $i++) {
                                 $numfila = $fila[$i];

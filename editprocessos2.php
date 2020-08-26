@@ -257,7 +257,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 		actiu='" . $actiu . "'
 	WHERE nom='" . $nom . "' AND grup='" . $grup . "' ";
 
-                mysql_query($query2) or die('Error, insert query2 failed');
+                mysqli_query($conn,$query2) or die('Error, insert query2 failed');
 
                 echo "<p class='comment'>Els canvis en el procés " . $supernom . " - grup " . $supergrup . " s'han guardat correctament
 	</p>";
@@ -266,13 +266,13 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             else
             {
             $select = "SELECT data_inici,data_fi,periode,dia_recollida,dia_tall,hora_tall,actiu
-		FROM processos 
+		FROM processos
 		WHERE nom='$nom' AND grup='$grup'";
-            $query = mysql_query($select);
+            $query = mysqli_query($conn,$select);
             if (!$query) {
-                die('Invalid query: ' . mysql_error());
+                die('Invalid query: ' . mysqli_error($conn));
             }
-            list($predatai, $predataf, $preperiode, $prediare, $prediat, $prehorat, $preactiu) = mysql_fetch_row($query);
+            list($predatai, $predataf, $preperiode, $prediare, $prediat, $prehorat, $preactiu) = mysqli_fetch_row($query);
 
             $selec3 = "";
             $selec4 = "";
@@ -297,13 +297,13 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 $time_diare = strtotime("next " . $diare_a, $diat_0);
                 $bd_diare = date("Y-m-d", $time_diare);
                 $query = "SELECT numero
-			FROM comanda 
+			FROM comanda
 			WHERE proces='$nom' AND grup='$grup' AND data='$bd_diare'";
-                $result = mysql_query($query);
+                $result = mysqli_query($conn,$query);
                 if (!$result) {
-                    die('Invalid query: ' . mysql_error());
+                    die('Invalid query: ' . mysqli_error($conn));
                 }
-                $rnum = mysql_num_rows($result);
+                $rnum = mysqli_num_rows($result);
                 if ($rnum != "") {
                     $alt_text = '1';
                 }

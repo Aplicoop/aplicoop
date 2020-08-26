@@ -19,16 +19,16 @@ include ('config/configuracio.php');
 <html lang="es">
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" >
-		<link rel="stylesheet" type="text/css" href="coope.css" />	
+		<link rel="stylesheet" type="text/css" href="coope.css" />
 		<title>editar dades grups ::: la coope</title>
 	</head>
 
 <body>
 <div class="pagina" style="margin-top: 10px;">
 <div class="contenidor_1" style="border: 1px solid red;">
-<p class='path'> 
-><a href='admint.php'>administració</a> 
- >><a href='editgrups.php'>crear, editar i eliminar grups</a> 
+<p class='path'>
+><a href='admint.php'>administració</a>
+ >><a href='editgrups.php'>crear, editar i eliminar grups</a>
  >>><a href='editgrups2.php?id=<?php echo $nom; ?>'>editar grup <?php echo $nom; ?></a>
 </p>
 <p class="h1" style="background: red; text-align: left; padding-left: 20px;">
@@ -39,16 +39,16 @@ Editar grup <?php echo $supernom; ?>
 <?php
 if ($actiu!="")
 	{
-	$query2 = "UPDATE grups	
+	$query2 = "UPDATE grups
 	SET actiu='".$actiu."', notes='".$notes."'
 	WHERE nom='".$nom."' ";
 
-	mysql_query($query2) or die('Error, insert query2 failed');
-	
+	mysqli_query($conn,$query2) or die('Error, insert query2 failed');
+
 	echo "<p class='comment'>Els canvis en el grup ".$supernom." s'han guardat correctament
 	</p>";
 	}
-else {	
+else {
 ?>
 
 <div class="contenidor_fac" style="border: 1px solid red; width: 600px; margin-bottom: 20px;" >
@@ -59,15 +59,15 @@ else {
 
 $select= "SELECT actiu,notes FROM grups WHERE nom='$nom'";
 
-$query=mysql_query($select);
+$query=mysqli_query($conn,$select);
 
 if (!$query) {
-    die('Invalid query: ' . mysql_error());
+    die('Invalid query: ' . mysqli_error($conn));
     }
-    
-list($preactiu,$prenotes)=mysql_fetch_row($query);
-	
-	$sel9="";$sel10="";	
+
+list($preactiu,$prenotes)=mysqli_fetch_row($query);
+
+	$sel9="";$sel10="";
 	if ($preactiu=="actiu") {$sel9="selected";}
 	else {$sel10="selected";}
 ?>
@@ -111,12 +111,12 @@ list($preactiu,$prenotes)=mysql_fetch_row($query);
 </body>
 </html>
 
-<?php 
+<?php
 
 include 'config/disconect.php';
 
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>

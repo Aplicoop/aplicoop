@@ -55,16 +55,16 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             if ($nom != "") {
                 $select = "SELECT nom FROM grups
 	WHERE nom='" . $nom . "' ";
-                $result = mysql_query($select) or die("Query failed. " . mysql_error());
+                $result = mysqli_query($conn,$select) or die("Query failed. " . mysqli_error($conn));
 
-                if (mysql_num_rows($result) == 1) {
+                if (mysqli_num_rows($result) == 1) {
                     die
                     ("<p class='comment'>No es pot crear de nou el grup " . $nom . " perquè ja existeix. </p>");
                 } else {
                     $query2 = "INSERT INTO grups
 			VALUES ('" . $nom . "', '" . $actiu . "', '" . $notes . "') ";
 
-                    mysql_query($query2) or die('Error, insert query2 failed');
+                    mysqli_query($conn,$query2) or die('Error, insert query2 failed');
 
                     echo
                         "<p class='comment'>Un nou procés s'ha introduit a la base de dades:</p>

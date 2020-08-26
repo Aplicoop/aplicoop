@@ -153,16 +153,16 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                 if ($pfam == 'tots') {
                     $select = "SELECT nom FROM usuaris WHERE tipus2='actiu' ORDER BY nom";
-                    $query = mysql_query($select);
+                    $query = mysqli_query($conn,$select);
                     if (!$query) {
-                        die('Invalid query: ' . mysql_error());
+                        die('Invalid query: ' . mysqli_error($conn));
                     }
-                    while (list($tfam) = mysql_fetch_row($query)) {
+                    while (list($tfam) = mysqli_fetch_row($query)) {
                         $query2 = "INSERT INTO moneder
  			VALUES ('" . $session . "','" . $user . "','" . $pdata_bd . "','" . $tfam . "','" . $pconcepte . "','" . $pvalor . "','" . $pnotes . "')";
-                        mysql_query($query2) or die('Error, insert query2 failed');
+                        mysqli_query($conn,$query2) or die('Error, insert query2 failed');
                         $query4 = "UPDATE usuaris SET moneder=moneder" . $signe . $absvalor . " WHERE nom = '" . $tfam . "'";
-                        mysql_query($query4) or die('Error, insert query4 failed');
+                        mysqli_query($conn,$query4) or die('Error, insert query4 failed');
                         print ("<p class='comment'>S'han " . $verb . " " . ABS($pvalor) . " euros a " . $tfam . " pel concepte " . $pconcepte . " </p>");
                     }
                     die ("<p class='comment'><a href='moneder_linia.php'>nova entrada</a> - <a href='admint.php'>sortir</a> </p>");
@@ -170,10 +170,10 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                 $query2 = "INSERT INTO moneder
  			VALUES ('" . $session . "','" . $user . "','" . $pdata_bd . "','" . $pfam . "','" . $pconcepte . "','" . $pvalor . "','" . $pnotes . "')";
-                mysql_query($query2) or die('Error, insert query2 failed');
+                mysqli_query($conn,$query2) or die('Error, insert query2 failed');
 
                 $query4 = "UPDATE usuaris SET moneder=moneder" . $signe . $absvalor . " WHERE nom = '" . $pfam . "'";
-                mysql_query($query4) or die('Error, insert query4 failed');
+                mysqli_query($conn,$query4) or die('Error, insert query4 failed');
 
                 die ("<p class='comment'>S'han " . $verb . " " . ABS($pvalor) . " euros a " . $pfam . " pel concepte " . $pconcepte . " </p>
 			<p class='comment'><a href='moneder_linia.php'>nova entrada</a> - <a href='admint.php'>sortir</a> </p>");
@@ -211,11 +211,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                                     <option value="tots">totes les families actives</option>
                                     <?php
                                     $select3 = "SELECT nom FROM usuaris WHERE tipus2='actiu' ORDER BY nom";
-                                    $query3 = mysql_query($select3);
+                                    $query3 = mysqli_query($conn,$select3);
                                     if (!$query3) {
-                                        die('Invalid query3: ' . mysql_error());
+                                        die('Invalid query3: ' . mysqli_error($conn));
                                     }
-                                    while (list($sfam) = mysql_fetch_row($query3)) {
+                                    while (list($sfam) = mysqli_fetch_row($query3)) {
                                         echo '<option value="' . $sfam . '">' . $sfam . '</option>';
                                     }
                                     ?>

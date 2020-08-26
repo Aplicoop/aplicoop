@@ -28,8 +28,8 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
   $fecha1 = $pnextyear . "-" . $nextmonth . "-01";
   include 'config/configuracio.php';
   $sel = "SELECT tipus FROM usuaris WHERE nom='$user'";
-  $query = mysql_query($sel) or die ('query failed: ' . mysql_error());
-  list($priv) = mysql_fetch_row($query);
+  $query = mysqli_query($conn,$sel) or die ('query failed: ' . mysqli_error($conn));
+  list($priv) = mysqli_fetch_row($query);
 
 ///sólo entramos si somos "super"////
 
@@ -55,11 +55,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
               <option value="">-- Seleccionar --</option>
               <?php
               $select2 = "SELECT DISTINCT YEAR(data) FROM comanda";
-              $query2 = mysql_query($select2);
+              $query2 = mysqli_query($conn,$select2);
               if (!$query2) {
-                die('Invalid query2: ' . mysql_error());
+                die('Invalid query2: ' . mysqli_error($conn));
               }
-              while (list($years) = mysql_fetch_row($query2)) {
+              while (list($years) = mysqli_fetch_row($query2)) {
                 if ($pyear == $years) {
                   echo '<option value="' . $years . '" selected>' . $years . '</option>';
                 } else {
@@ -77,11 +77,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             <option value="">-- Seleccionar --</option>
             <?php
             $select2 = "SELECT DISTINCT MONTH(data) mes FROM comanda ORDER BY mes ASC ";
-            $query2 = mysql_query($select2);
+            $query2 = mysqli_query($conn,$select2);
             if (!$query2) {
-              die('Invalid query2: ' . mysql_error());
+              die('Invalid query2: ' . mysqli_error($conn));
             }
-            while (list($meses) = mysql_fetch_row($query2)) {
+            while (list($meses) = mysqli_fetch_row($query2)) {
               if ($pmes == $meses) {
                 echo '<option value="' . $meses . '" selected>' . $meses . '</option>';
               } else {
@@ -131,12 +131,12 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
     JOIN comanda ON us.nom=comanda.usuari
     WHERE year(comanda.data2) = " . $pyear . " AND MONTH(comanda.data2) = " . $pmes . "
   )  AND usuaris.tipus2 = 'actiu' AND usuaris.domiciliacion = 1 AND usuaris.fechaalta <='" . $fecha1 . "')";
-  $result = mysql_query($sel);
+  $result = mysqli_query($conn,$sel);
   if (!$result) {
-    die('Invalid query: ' . mysql_error());
+    die('Invalid query: ' . mysqli_error($conn));
   }
   $k = 0;
-  while (list($socio, $nomsocio, $consumo, $cuota, $total) = mysql_fetch_row($result)) {
+  while (list($socio, $nomsocio, $consumo, $cuota, $total) = mysqli_fetch_row($result)) {
    ?>
    <tr>
     <td><?php echo $k + 1; ?></td>
@@ -169,11 +169,11 @@ FROM usuaris AS us
 JOIN comanda ON us.nom=comanda.usuari
 WHERE year(comanda.data2) = " . $pyear . " AND MONTH(comanda.data2) = " . $pmes . "
 ) AND usuaris.tipus2 = 'actiu' AND usuaris.domiciliacion = 1 AND usuaris.fechaalta <='" . $fecha1 . "'))as sub";
-$result = mysql_query($tot);
+$result = mysqli_query($conn,$tot);
 if (!$result) {
-  die('Invalid query: ' . mysql_error());
+  die('Invalid query: ' . mysqli_error($conn));
 }
-list($consumo_of_1, $kuota_of_1, $totalof1) = mysql_fetch_row($result);
+list($consumo_of_1, $kuota_of_1, $totalof1) = mysqli_fetch_row($result);
 ?>
 <tr>
   <td>TOTALES : </td>
@@ -209,12 +209,12 @@ JOIN comanda ON us.nom=comanda.usuari
 WHERE year(comanda.data2) = ".$pyear." AND MONTH(comanda.data2) = ".$pmes."
 )  AND usuaris.tipus2 = 'actiu' AND usuaris.domiciliacion = 0 AND usuaris.kuota != 0 AND usuaris.fechaalta <'".$fecha1."')";
 
-$result = mysql_query($sel);
+$result = mysqli_query($conn,$sel);
 if (!$result) {
-  die('Invalid query: ' . mysql_error());
+  die('Invalid query: ' . mysqli_error($conn));
 }
 $k = 0;
-while (list($socio, $nomsocio, $consumo, $cuota, $total) = mysql_fetch_row($result)) {
+while (list($socio, $nomsocio, $consumo, $cuota, $total) = mysqli_fetch_row($result)) {
   ?>
   <tr>
     <td><?php echo $k +1; ?></td>
@@ -245,11 +245,11 @@ FROM usuaris AS us
 JOIN comanda ON us.nom=comanda.usuari
 WHERE year(comanda.data2) = ".$pyear." AND MONTH(comanda.data2) = ".$pmes."
 )  AND usuaris.tipus2 = 'actiu' AND usuaris.domiciliacion = 0 AND usuaris.kuota != 0 AND usuaris.fechaalta <'".$fecha1."')) as sub";
-$result = mysql_query($tot);
+$result = mysqli_query($conn,$tot);
 if (!$result) {
-  die('Invalid query: ' . mysql_error());
+  die('Invalid query: ' . mysqli_error($conn));
 }
-list($consumo2, $kuota2, $totalof3) = mysql_fetch_row($result);
+list($consumo2, $kuota2, $totalof3) = mysqli_fetch_row($result);
 ?>
 <tr>
   <td>TOTAL : </td>

@@ -40,11 +40,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
     /// Busquem nom i prov del producte a partir de la referència ////
     $query0 = "SELECT nom, proveidora FROM productes WHERE ref='$gref'";
-    $result0 = mysql_query($query0);
+    $result0 = mysqli_query($conn,$query0);
     if (!$result0) {
         die("Query0 to show fields from table failed");
     }
-    list($gnom, $gprov) = mysql_fetch_row($result0);
+    list($gnom, $gprov) = mysqli_fetch_row($result0);
     ///////////
 
     ?>
@@ -214,11 +214,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 <?php
 
                     $query9 = "SELECT tipus FROM categoria ORDER BY tipus";
-                    $result9 = mysql_query($query9);
+                    $result9 = mysqli_query($conn,$query9);
                     if (!$result9) {
                         die("Query9 to show fields from table categoria failed");
                     }
-                    while (list($jtipus) = mysql_fetch_row($result9))
+                    while (list($jtipus) = mysqli_fetch_row($result9))
                     {
                     ?>
                     case "<?php echo $jtipus; ?>":
@@ -227,12 +227,12 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                     $query8 = "SELECT subcategoria FROM subcategoria
 		WHERE categoria='" . $jtipus . "' ORDER BY subcategoria";
-                    $result8 = mysql_query($query8);
+                    $result8 = mysqli_query($conn,$query8);
                     if (!$result8) {
                         die("Query8 to show fields from table subcategoria failed");
                     }
                     $i = 1;
-                    while (list($jsubcat) = mysql_fetch_row($result8))
+                    while (list($jsubcat) = mysqli_fetch_row($result8))
                     {
                     ?>
                         document.nouprod.subtipus.options[<?php echo $i; ?>] = new Option("<?php echo $jsubcat; ?>", "<?php echo $jsubcat; ?>");
@@ -302,22 +302,22 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             if ($que == 'create') {
                 $select = "SELECT nom,proveidora FROM productes
 	WHERE nom='" . $pnom . "' AND proveidora='" . $pprov . "'";
-                $query = mysql_query($select);
+                $query = mysqli_query($conn,$select);
                 if (!$query) {
-                    die('Invalid query: ' . mysql_error());
+                    die('Invalid query: ' . mysqli_error($conn));
                 }
-                if (mysql_num_rows($query) == 1) {
+                if (mysqli_num_rows($query) == 1) {
                     die
                     ("<p class='comment'>El producte " . $pnom . " de la proveïdora " . $pprov . " ja existeix.</p>");
                 } else {
                     ///Creem la referència///
                     $tpll = substr($pprov, 0, 3);
                     $select7 = "SELECT ref FROM productes WHERE ref LIKE '" . $tpll . "%' ORDER BY ref DESC LIMIT 1";
-                    $query7 = mysql_query($select7);
+                    $query7 = mysqli_query($conn,$select7);
                     if (!$query7) {
-                        die('Invalid query7: ' . mysql_error());
+                        die('Invalid query7: ' . mysqli_error($conn));
                     }
-                    list($sref) = mysql_fetch_row($query7);
+                    list($sref) = mysqli_fetch_row($query7);
                     if ($sref != "") {
                         /// Hem d agafar el $sref separar els tres primers caracters i sumar-li un als quatre darrers que son un nombre
                         $lletres = substr($pprov, 0, 3);
@@ -334,7 +334,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
  				VALUES ('" . $newref . "','" . $pnom . "','" . $punitat . "','" . $pprov . "','" . $pcat . "','" . $psubcat . "',
  				'" . $pactiu . "','" . $ppreusi . "','" . $piva . "','" . $pmarge . "','" . $pdescompte . "','0',
  				'" . $plabels . "','" . $pnotes . "')";
-                    mysql_query($query2) or die('Error, insert query2 failed:' . mysql_error());
+                    mysqli_query($conn,$query2) or die('Error, insert query2 failed:' . mysqli_error($conn));
                     die ("<p class='comment'>El producte " . $newref . "-" . $supernom . " s'ha introduït correctament a la base de dades:</p>
 			<p class='cos2'>unitat: " . $punitat . "</p>
 			<p class='cos2'>proveïdora: " . $pprov . "</p>
@@ -359,7 +359,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 	subcategoria='" . $psubcat . "',actiu='" . $pactiu . "',preusi='" . $ppreusi . "',iva='" . $piva . "',marge='" . $pmarge . "',
 	descompte='" . $pdescompte . "',labels='" . $plabels . "',estoc='" . $pestoc ."',notes='" . $pnotes . "'
 	WHERE ref='" . $pref . "'";
-                mysql_query($query3) or die('Error, insert query3 failed');
+                mysqli_query($conn,$query3) or die('Error, insert query3 failed');
                 die ("<div class='box'><p class='alert alert--info'>El producto " . $pref . "-" . $supernom . " ha cambiado los siguientes datos:</p>
 			<p class='cos2'>unidades: " . $punitat . "</p>
 			<p class='cos2'>provedor: " . $gprov . "</p>
@@ -382,29 +382,29 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             if ($que == 'elim') {
                 $query4 = "SELECT al.producte, a.proveidora FROM albara_linia AS al, albara AS a
 	WHERE a.numero=al.numero AND al.producte='" . $gnom . "' AND a.proveidora='" . $gprov . "'";
-                $result4 = mysql_query($query4);
+                $result4 = mysqli_query($conn,$query4);
                 if (!$result4) {
-                    die('Invalid query4: ' . mysql_error());
+                    die('Invalid query4: ' . mysqli_error($conn));
                 }
-                if (mysql_num_rows($result4) != 0) {
+                if (mysqli_num_rows($result4) != 0) {
                     die
                     ("<p class='comment'>El producte " . $gnom . " de la proveïdora " . $gprov . " ja ha estat utilitzat.</p>
    	<p class='commnet'>Pots desactivar-lo, però no borrar-lo</p>");
                 }
                 $query5 = "SELECT cl.ref, pr.nom, pr.proveidora FROM comanda_linia AS cl, productes AS pr
 	WHERE cl.ref=pr.ref AND pr.nom='$gnom' AND pr.proveidora='" . $gprov . "'";
-                $result5 = mysql_query($query5);
+                $result5 = mysqli_query($conn,$query5);
                 if (!$result5) {
-                    die('Invalid query5: ' . mysql_error());
+                    die('Invalid query5: ' . mysqli_error($conn));
                 }
-                if (mysql_num_rows($result5) != 0) {
+                if (mysqli_num_rows($result5) != 0) {
                     die
                     ("<p class='coment'>El producte " . $gnom . " de la proveïdora " . $gprov . " ja ha estat utilitzat.</p>
    	<p class='comment'>Pots desactivar-lo, però no borrar-lo</p>");
                 }
 
                 $query6 = "DELETE FROM productes WHERE ref='" . $gref . "'";
-                mysql_query($query6) or die('Error, insert query6 failed');
+                mysqli_query($conn,$query6) or die('Error, insert query6 failed');
                 die
                 ("<p class='comment'>El producte " . $gnom . " de la proveïdora " . $gprov . " s'ha eliminat de la base de dades.</p>");
             }
@@ -424,12 +424,12 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             if ($gref != "") {
                 $select = "SELECT * FROM productes
 		WHERE ref='" . $gref . "'";
-                $query = mysql_query($select);
+                $query = mysqli_query($conn,$select);
                 if (!$query) {
-                    die('Invalid query: ' . mysql_error());
+                    die('Invalid query: ' . mysqli_error($conn));
                 }
 
-                list($ref, $nom, $unitat, $proveidora, $tipus, $subtipus, $actiu, $preusi, $iva, $marge, $descompte, $estoc, $labels, $notes) = mysql_fetch_row($query);
+                list($ref, $nom, $unitat, $proveidora, $tipus, $subtipus, $actiu, $preusi, $iva, $marge, $descompte, $estoc, $labels, $notes) = mysqli_fetch_row($query);
                 $readonly = "readonly";
                 $marge = $marge * 100;
                 $descompte = $descompte * 100;
@@ -478,11 +478,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                                 } else {
                                     echo '<SELECT name="prov" id="prov" size="1" maxlenght="30"><option value="">elegir proveedor</option>';
                                     $query = "SELECT nom FROM proveidores ORDER BY nom";
-                                    $result = mysql_query($query);
+                                    $result = mysqli_query($conn,$query);
                                     if (!$result) {
                                         die("Query to show fields from table proveidores failed");
                                     }
-                                    while (list($sprov) = mysql_fetch_row($result)) {
+                                    while (list($sprov) = mysqli_fetch_row($result)) {
                                         echo "<option value='" . $sprov . "'>" . $sprov . "</option>";
                                     }
                                     echo "</SELECT>";
@@ -502,11 +502,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                                     <?php
 
                                     $query = "SELECT tipus FROM categoria ORDER BY tipus";
-                                    $result = mysql_query($query);
+                                    $result = mysqli_query($conn,$query);
                                     if (!$result) {
                                         die("Query to show fields from table tipus_prod failed");
                                     }
-                                    while (list($stipus) = mysql_fetch_row($result)) {
+                                    while (list($stipus) = mysqli_fetch_row($result)) {
                                         if ($stipus == $tipus) {
                                             echo "<option value='" . $stipus . "' selected>" . $stipus . "</option>";
                                         } else {

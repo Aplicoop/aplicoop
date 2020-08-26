@@ -27,14 +27,14 @@ include 'config/configuracio.php';
 
 <div class="contenidor_1" style="border: 1px solid grey;">
 
-<p class='path'> 
-><a href='admint.php'>administració</a> 
+<p class='path'>
+><a href='admint.php'>administració</a>
 >><a href='moneder_usuari.php'>moneder famílies</a>
 </p>
 <p class="h1" style="background: grey; text-align: left; padding-left: 20px;">
 Moneder famílies
 </p>
- 
+
 <table width="80%" align="center" style="padding: 10px 0px;">
 <form action="moneder_usuari.php" method="post" name="fam" id="fam">
 <tr>
@@ -67,10 +67,10 @@ if ($pactiu=='baixa') {$checked2='selected';$checked1="";}
 
 <?php
 $select3= "SELECT nom FROM grups ORDER BY nom";
-$query3=mysql_query($select3);
-if (!$query3) {die('Invalid query3: ' . mysql_error());}
+$query3=mysqli_query($conn,$select3);
+if (!$query3) {die('Invalid query3: ' . mysqli_error($conn));}
 
-while (list($sgrup)=mysql_fetch_row($query3)) 
+while (list($sgrup)=mysqli_fetch_row($query3))
 {
 	if ($pgrup==$sgrup){echo '<option value="'.$sgrup.'" selected>'.$sgrup.'</option>';}
 	else {echo '<option value="'.$sgrup.'">'.$sgrup.'</option>';}
@@ -104,7 +104,7 @@ echo'
 </form>
 </tr></table>
 
-<div class="contenidor_fac" style="border: 1px solid grey; max-height: 350px; overflow: scroll; overflow-x: hidden; 
+<div class="contenidor_fac" style="border: 1px solid grey; max-height: 350px; overflow: scroll; overflow-x: hidden;
 margin-bottom: 20px; padding-bottom: 20px;">
 
 <?php
@@ -117,28 +117,28 @@ margin-bottom: 20px; padding-bottom: 20px;">
 	elseif ($pactiu=="" AND $pgrup!="" AND $ptipus!="") {$where="AND dia='".$pgrup."' AND tipus='".$ptipus."'"; $title="Famílies del grup ".$pgrup." i de la comissió ".$ptipus;}
 	elseif ($pactiu=="" AND $pgrup!="" AND $ptipus=="") {$where="AND dia='".$pgrup."'"; $title="Famílies del grup ".$pgrup;}
 	elseif ($pactiu=="" AND $pgrup=="" AND $ptipus=="") {$where=""; $title="Totes les famílies";}
-	
-	print ('<p class="h1" 
-		style="background: grey; font-size:14px; text-align: left; 
+
+	print ('<p class="h1"
+		style="background: grey; font-size:14px; text-align: left;
 		height: 20px; padding-left: 20px;">
 		'.$title.'
 		</p>');
-	
+
 	print('<table width="80%" align="center" cellspading="5" cellspacing="5" >
 		<tr class="cos_majus">
 		<td align="center" width="30%">nom</td>
 		<td align="center" width="40%">components</td>
 		<td align="center" width="35%">moneder</td></tr>');
 
-	$taula = "SELECT usuaris.nom, usuaris.components, SUM(moneder.valor) as total 
-	FROM usuaris, moneder 
+	$taula = "SELECT usuaris.nom, usuaris.components, SUM(moneder.valor) as total
+	FROM usuaris, moneder
 	WHERE moneder.familia=usuaris.nom ".$where."
-	GROUP BY moneder.familia 
+	GROUP BY moneder.familia
 	ORDER BY total ASC";
-	$result = mysql_query($taula);
-	if (!$result) {die('Invalid query: ' . mysql_error());}
+	$result = mysqli_query($conn,$taula);
+	if (!$result) {die('Invalid query: ' . mysqli_error($conn));}
 
-	while (list($nom,$components,$mone)=mysql_fetch_row($result))
+	while (list($nom,$components,$mone)=mysqli_fetch_row($result))
 	{
 		echo "<tr class='cos'>
 		<td align='center'><a href='comptes.php?id4=".$nom."'>".$nom."</a></td>
@@ -153,7 +153,7 @@ margin-bottom: 20px; padding-bottom: 20px;">
 
 <p class="cos2" style="clear: both; text-align: center;">
 Per veure la fitxa completa d'una família clicka sobre el seu nom
-</p>	
+</p>
 </div>
 </body>
 </html>
@@ -161,8 +161,8 @@ Per veure la fitxa completa d'una família clicka sobre el seu nom
 
 <?php
 include 'config/disconect.php';
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>

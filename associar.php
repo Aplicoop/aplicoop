@@ -25,7 +25,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             </p>
             <p class="h1" style="background: #66FF66; text-align: left; padding-left: 20px;">
                 Associar categories, processos i grups
-<span style="display: inline; float: right; text-align: center; vertical-align: middle; 
+<span style="display: inline; float: right; text-align: center; vertical-align: middle;
 padding: 2px 50px 2px 0px;">
 <input class="button2" style="width:200px;" type="button" value="CREAR NOVA ASSOCIACIÓ"
        onClick="javascript:window.location = 'associar3.php';">
@@ -46,12 +46,12 @@ padding: 2px 50px 2px 0px;">
                     $taula = "SELECT nom, grup FROM processos
 		GROUP BY nom, grup";
 
-                    $result = mysql_query($taula);
+                    $result = mysqli_query($conn,$taula);
                     if (!$result) {
-                        die('Invalid query: ' . mysql_error());
+                        die('Invalid query: ' . mysqli_error($conn));
                     }
 
-                    while (list($proc, $grup) = mysql_fetch_row($result)) {
+                    while (list($proc, $grup) = mysqli_fetch_row($result)) {
 
                         echo "<tr class='cos'><td align='center'>" . $proc . " </td>
 <td align='center'>" . $grup . "</td>

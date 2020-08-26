@@ -37,24 +37,24 @@ function deleteDades($numcmda)
     // borra les dades introduides inicialment
     // abans de borrar restitueix l'estoc
     $taula33 = "SELECT cl.ref, p.nom, p.proveidora, p.categoria, cat.estoc, cl.cistella
-	FROM comanda_linia AS cl, productes AS p, categoria AS cat 
+	FROM comanda_linia AS cl, productes AS p, categoria AS cat
 	WHERE cl.ref=p.ref AND p.categoria=cat.tipus AND cl.numero=" . $numcmda;
-    $result33 = mysql_query($taula33);
+    $result33 = mysqli_query($conn,$taula33);
     if (!$result33) {
-        die('Invalid query33: ' . mysql_error());
+        die('Invalid query33: ' . mysqli_error($conn));
     }
-    while (list($ref, $prod, $prov, $cat, $estoc, $cistella) = mysql_fetch_row($result33)) {
+    while (list($ref, $prod, $prov, $cat, $estoc, $cistella) = mysqli_fetch_row($result33)) {
         if ($estoc == 'si') {
             $query34 = "UPDATE productes
 			SET estoc=estoc+'$cistella'
 			WHERE ref='$ref'";
-            mysql_query($query34) or die('Error, insert query34 failed');
+            mysqli_query($conn,$query34) or die('Error, insert query34 failed');
         }
     }
     $querydel = "DELETE FROM comanda WHERE numero='$numcmda'";
-    mysql_query($querydel) or die('Error, delete querydel failed');
+    mysqli_query($conn,$querydel) or die('Error, delete querydel failed');
     $querydel2 = "DELETE FROM comanda_linia WHERE numero='$numcmda'";
-    mysql_query($querydel2) or die('Error, delete querydel2 failed');
+    mysqli_query($conn,$querydel2) or die('Error, delete querydel2 failed');
 }
 
 function selectEstoc($se_ref)
@@ -62,11 +62,11 @@ function selectEstoc($se_ref)
     // busquem si el producte és d'estoc o no
     $selectse = "SELECT cat.estoc FROM productes AS pr, categoria AS cat
 	WHERE pr.categoria=cat.tipus AND pr.ref='$se_ref'";
-    $resultse = mysql_query($selectse);
+    $resultse = mysqli_query($conn,$selectse);
     if (!$resultse) {
-        die('Invalid query selectse: ' . mysql_error());
+        die('Invalid query selectse: ' . mysqli_error($conn));
     }
-    $estocse = mysql_fetch_row($resultse);
+    $estocse = mysqli_fetch_row($resultse);
     return $estocse;
 }
 
@@ -74,11 +74,11 @@ function laCuenta($numero)
 {
     /// calcula el valor total de la factura ///
     $selectCuenta = "SELECT SUM(cistella*preu*(1+iva)) FROM comanda_linia WHERE numero='" . $numero . "'";
-    $resultCuenta = mysql_query($selectCuenta);
+    $resultCuenta = mysqli_query($conn,$selectCuenta);
     if (!$resultCuenta) {
-        die('Invalid queryCuenta: ' . mysql_error());
+        die('Invalid queryCuenta: ' . mysqli_error($conn));
     }
-    $cuenta = mysql_fetch_row($resultCuenta);
+    $cuenta = mysqli_fetch_row($resultCuenta);
     return $cuenta;
 }
 
@@ -86,11 +86,11 @@ function selectNumFact($numero)
 {
     /// Busquem el numero de factura ///
     $selectnf = "SELECT numfact FROM comanda WHERE numero='" . $numero . "'";
-    $resultnf = mysql_query($selectnf);
+    $resultnf = mysqli_query($conn,$selectnf);
     if (!$resultnf) {
-        die('Invalid querynf: ' . mysql_error());
+        die('Invalid querynf: ' . mysqli_error($conn));
     }
-    $numfact = mysql_fetch_row($resultnf);
+    $numfact = mysqli_fetch_row($resultnf);
     return $numfact;
 
 }
@@ -184,13 +184,13 @@ function selectNumFact($numero)
                 $taulanf2 = "SELECT numfact
 				FROM comanda
 				WHERE YEAR(data2)=" . $currentyear . "
-				ORDER BY numfact DESC 
+				ORDER BY numfact DESC
 				LIMIT 1";
-                $resultnf2 = mysql_query($taulanf2);
+                $resultnf2 = mysqli_query($conn,$taulanf2);
                 if (!$resultnf2) {
-                    die('Invalid query: ' . mysql_error());
+                    die('Invalid query: ' . mysqli_error($conn));
                 }
-                list($lastnumfact) = mysql_fetch_row($resultnf2);
+                list($lastnumfact) = mysqli_fetch_row($resultnf2);
 
                 if ($lastnumfact != "") {
                     $numfact = $lastnumfact + 1;
@@ -209,8 +209,8 @@ function selectNumFact($numero)
                 /// inserim les dades a la taula comanda ///
                 $query2 = "INSERT INTO `comanda` ( `usuari`,`sessionid`,`data`,`check0`,`data2`,`check1`,`check2`,`numfact`,`notes`)
 					VALUES ('$paddfam', '$sessionid', '$data_avui', '1', '$data_avui', '1', '1','$numfact','$notes')";
-                mysql_query($query2) or die('Error, insert query2 failed');
-                $numcmda = mysql_insert_id();
+                mysqli_query($conn,$query2) or die('Error, insert query2 failed');
+                $numcmda = mysqli_insert_id();
 
                 /// visualitzem les dades ///
                 /// l'usuari pot elegir entre
@@ -242,8 +242,8 @@ function selectNumFact($numero)
                     $sel = "SELECT u.nomf, u.adressf, u.niff
 				FROM comanda AS c, usuaris AS u
 				WHERE c.numero='$numcmda' AND c.usuari=u.nom";
-                    $query = mysql_query($sel) or die('query:' . mysql_error());
-                    list($nomf, $adressf, $niff) = mysql_fetch_row($query);
+                    $query = mysqli_query($conn,$sel) or die('query:' . mysqli_error($conn));
+                    list($nomf, $adressf, $niff) = mysqli_fetch_row($query);
 
                     /// Aconseguim la data d'avui per veure ///
                     $ver_avui = date("d-m-Y");
@@ -289,11 +289,11 @@ function selectNumFact($numero)
                                     /// Busquem ref,preu, iva, marge i descompte a partir de nomprod i nomprov ////
                                     $query0 = "SELECT nom, proveidora, preusi, iva, marge, descompte FROM productes
 						WHERE ref='$pref[$i]'";
-                                    $result0 = mysql_query($query0);
+                                    $result0 = mysqli_query($conn,$query0);
                                     if (!$result0) {
                                         die("Query0 to show fields from table failed");
                                     }
-                                    list($nomprod, $nomprov, $spreusi, $siva, $smarge, $sdescompte) = mysql_fetch_row($result0);
+                                    list($nomprod, $nomprov, $spreusi, $siva, $smarge, $sdescompte) = mysqli_fetch_row($result0);
 
                                     $pvp = $spreusi * (1 + $smarge);
                                     $pvp = sprintf("%01.2f", $pvp);
@@ -306,7 +306,7 @@ function selectNumFact($numero)
                                     /// entrem les quantitats a comanda_linia ///
                                     $query4 = "INSERT INTO `comanda_linia` ( `numero`, `ref`, `cistella`, `preu`, `iva`, `descompte`)
 						VALUES ('$numcmda', '$pref[$i]', '$num[$i]', '$pvp', '$siva', '$sdescompte')";
-                                    mysql_query($query4) or die('Error, insert query failed');
+                                    mysqli_query($conn,$query4) or die('Error, insert query failed');
 
                                     /// restem les quantitats de l'estoc en el cas que la categoria del producte sigui d'estoc///
                                     $estocse = selectEstoc($pref[$i]);
@@ -315,7 +315,7 @@ function selectNumFact($numero)
                                         $query7 = "UPDATE productes
 							SET estoc=estoc-'$num[$i]'
 							WHERE ref='$pref[$i]'";
-                                        mysql_query($query7) or die('Error, update query7 failed');
+                                        mysqli_query($conn,$query7) or die('Error, update query7 failed');
                                     }
                                 }
                             }
@@ -326,12 +326,12 @@ function selectNumFact($numero)
 				FROM comanda_linia AS cl, productes AS prod
 				WHERE cl.numero='$numcmda' AND cl.ref=prod.ref
 				ORDER BY prod.categoria, prod.proveidora, prod.nom";
-                            $result5 = mysql_query($sel5) or die(mysql_error());
+                            $result5 = mysqli_query($conn,$sel5) or die(mysqli_error($conn));
 
                             $total = 0;
                             $total_import_brut = 0;
                             $totaliva = 0;
-                            while (list ($ref, $nomprod, $nomprod2, $unitat, $cistella, $preu, $descompte, $iva) = mysql_fetch_row($result5)) {
+                            while (list ($ref, $nomprod, $nomprod2, $unitat, $cistella, $preu, $descompte, $iva) = mysqli_fetch_row($result5)) {
                                 /// agafem la primera lletra de la unitat ///
                                 $unitat1 = substr($unitat, 0, 1);
 
@@ -430,9 +430,9 @@ function selectNumFact($numero)
                 $session = date("Y-m-d H:i:s");
                 $selectMoneder2 = "INSERT INTO moneder(sessio, user, data, familia, concepte, valor)
 		VALUES ('" . $session . "','" . $user . "','" . date('Y-m-d') . "','" . $paddfam . "','Factura num. " . $numfact . "','" . $cuenta . "')";
-                $resultMoneder2 = mysql_query($selectMoneder2);
+                $resultMoneder2 = mysqli_query($conn,$selectMoneder2);
                 if (!$resultMoneder2) {
-                    die('Invalid query: ' . mysql_error());
+                    die('Invalid query: ' . mysqli_error($conn));
                 }
                 if ($ptipus == "dev") {
                     $text = array("devuelto", "devolución");
@@ -503,12 +503,12 @@ function selectNumFact($numero)
                                     echo '<option value="anom" ' . $selected2 . '>Anònim</option>';
 
                                     $taula7 = "SELECT nom FROM usuaris WHERE tipus2='actiu' ORDER BY nom";
-                                    $result7 = mysql_query($taula7);
+                                    $result7 = mysqli_query($conn,$taula7);
                                     if (!$result7) {
-                                        die('Invalid query7: ' . mysql_error());
+                                        die('Invalid query7: ' . mysqli_error($conn));
                                     }
 
-                                    while (list($sfam) = mysql_fetch_row($result7)) {
+                                    while (list($sfam) = mysqli_fetch_row($result7)) {
                                         $selected3 = "";
                                         if ($paddfam == $sfam) {
                                             $selected3 = "selected";
@@ -534,12 +534,12 @@ function selectNumFact($numero)
                                 <?php
 
                                 $sel = "SELECT tipus FROM categoria WHERE actiu='activat' ORDER BY tipus ASC";
-                                $result = mysql_query($sel);
+                                $result = mysqli_query($conn,$sel);
                                 if (!$result) {
-                                    die('Invalid query: ' . mysql_error());
+                                    die('Invalid query: ' . mysqli_error($conn));
                                 }
 
-                                while (list($scat) = mysql_fetch_row($result)) {
+                                while (list($scat) = mysqli_fetch_row($result)) {
                                     if ($pcat == $scat) {
                                         echo '<option value="#' . $scat . '" selected>' . $scat . '</option>';
                                     } else {
@@ -560,15 +560,15 @@ function selectNumFact($numero)
             <?php
 
             $sel = "SELECT tipus FROM categoria WHERE actiu='activat' ORDER BY tipus ASC";
-            $result = mysql_query($sel);
+            $result = mysqli_query($conn,$sel);
             if (!$result) {
-                die('Invalid query: ' . mysql_error());
+                die('Invalid query: ' . mysqli_error($conn));
             }
 
             $color = array("#C0C000", "#00b2ff", "orange", "#b20000", "#14e500", "red", "#8524ba", "green");
             $id = 0;
             $cc = 0;
-            while (list($sscat) = mysql_fetch_row($result)) {
+            while (list($sscat) = mysqli_fetch_row($result)) {
 
                 $cc++;
                 if ($cc == 7) {
@@ -580,9 +580,9 @@ function selectNumFact($numero)
 			WHERE pr.categoria=ctg.tipus AND pr.categoria='$sscat' AND pr.actiu='actiu'
 			ORDER BY pr.categoria, pr.nom ";
 
-                $result2 = mysql_query($sel2);
+                $result2 = mysqli_query($conn,$sel2);
                 if (!$result2) {
-                    die('Invalid query2: ' . mysql_error());
+                    die('Invalid query2: ' . mysqli_error($conn));
                 }
 
                 print ('
@@ -598,7 +598,7 @@ function selectNumFact($numero)
                 ');
 
                 $contador = 0;
-                while (list($ref, $nomprod, $unitat, $prov, $categ, $ctg_estoc, $subcat, $preu, $iva, $marge, $descompte, $pr_estoc) = mysql_fetch_row($result2)) {
+                while (list($ref, $nomprod, $unitat, $prov, $categ, $ctg_estoc, $subcat, $preu, $iva, $marge, $descompte, $pr_estoc) = mysqli_fetch_row($result2)) {
                     //// Si estem editant un formulari ja fet -existeix $pnumcmda-
                     /// Hem apretat el boto EDITAR a la visualització de la factura
                     /// han d'apareixer inicialment les quantitats elegides
@@ -607,11 +607,11 @@ function selectNumFact($numero)
                         $sel3 = "SELECT cistella FROM comanda_linia
 					WHERE numero='$pnumcmda' AND ref='$ref'";
 
-                        $result3 = mysql_query($sel3);
+                        $result3 = mysqli_query($conn,$sel3);
                         if (!$result3) {
-                            die('Invalid query3: ' . mysql_error());
+                            die('Invalid query3: ' . mysqli_error($conn));
                         }
-                        list ($quantitat) = mysql_fetch_row($result3);
+                        list ($quantitat) = mysqli_fetch_row($result3);
 
                         if ($quantitat != "") {
                             /// per veure la quantitat amb els decimals imprescindibles /////
@@ -642,14 +642,14 @@ function selectNumFact($numero)
                                 $query34 = "UPDATE productes
 							SET estoc=estoc+'$quantitat'
 							WHERE ref='$ref'";
-                                mysql_query($query34) or die('Error, insert query34 failed');
+                                mysqli_query($conn,$query34) or die('Error, insert query34 failed');
 
                                 $sel35 = "SELECT estoc FROM productes WHERE ref='$ref'";
-                                $result35 = mysql_query($sel35);
+                                $result35 = mysqli_query($conn,$sel35);
                                 if (!$result35) {
-                                    die('Invalid query35: ' . mysql_error());
+                                    die('Invalid query35: ' . mysqli_error($conn));
                                 }
-                                $pr_estoc = mysql_fetch_row($result35);
+                                $pr_estoc = mysqli_fetch_row($result35);
                                 $pr_estoc = $pr_estoc[0];
                             }
                         }
@@ -720,9 +720,9 @@ function selectNumFact($numero)
                 echo '<input type="hidden" name="numcmda" id="numcmda" value="' . $pnumcmda . '">';
 
                 $querydel = "DELETE FROM comanda WHERE numero='$pnumcmda'";
-                mysql_query($querydel) or die('Error, delete querydel failed');
+                mysqli_query($conn,$querydel) or die('Error, delete querydel failed');
                 $querydel2 = "DELETE FROM comanda_linia WHERE numero='$pnumcmda'";
-                mysql_query($querydel2) or die('Error, delete querydel2 failed');
+                mysqli_query($conn,$querydel2) or die('Error, delete querydel2 failed');
             }
             ?>
 
@@ -749,4 +749,4 @@ include 'config/disconect.php';
 else {
     header("Location: index.php");
 }
-?>	
+?>

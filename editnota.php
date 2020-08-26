@@ -22,7 +22,7 @@ if ($any<100){
 $any=$any+2000;
 }
 
-$data=$any."-".$mes."-".$dia; 
+$data=$any."-".$mes."-".$dia;
 $data2=$dia."-".$mes."-".$any;
 
 include 'config/configuracio.php';
@@ -43,7 +43,7 @@ if ($numnota!="")
 		$title2="Editar nota";
 		$button='<p class="linia_button2" style="background: #a74fd7; text-align: center; vertical-align: middle;">
 		<input class="button2" name="acceptar" type="button" id="acceptar" value="Guardar" onClick="validar2(this.form);">
-		<input class="button2" name="eliminar" type="button" id="eliminar" value="Eliminar" 
+		<input class="button2" name="eliminar" type="button" id="eliminar" value="Eliminar"
      onClick="var answer = confirm (\'Estas segur de borrar aquest producte!!\')
 				if (answer)
 					{window.location=\'editnota.php?id='.$numnota.'&id2=del \'}"></p>';
@@ -65,7 +65,7 @@ else
 <html lang="es">
 	<head>
 		<?php include 'head.php'; ?>
-		<link rel="stylesheet" type="text/css" href="coope.css" />	
+		<link rel="stylesheet" type="text/css" href="coope.css" />
 		<title>crear/editar nota ::: la coope</title>
 
 <script language="javascript" type="text/javascript">
@@ -74,31 +74,31 @@ function validar2(form) {
 
 var totbe=1;
 
-if ((editnota.dia.value == "") || (isNaN(editnota.dia.value)) || 
+if ((editnota.dia.value == "") || (isNaN(editnota.dia.value)) ||
 (editnota.dia.value>=32) || (editnota.dia.value==0)) {
-     alert ('DIA ha de ser un valor numèric entre 1 i 31'); 
+     alert ('DIA ha de ser un valor numèric entre 1 i 31');
 	  editnota.dia.focus();
-     totbe=0;   
+     totbe=0;
 }
 
-if ((editnota.mes.value == "") || (isNaN(editnota.mes.value)) || 
+if ((editnota.mes.value == "") || (isNaN(editnota.mes.value)) ||
 (editnota.mes.value>=13) || (editnota.mes.value==0)) {
-     alert ('MES ha de ser un valor numèric entre 1 i 12'); 
+     alert ('MES ha de ser un valor numèric entre 1 i 12');
 	  editnota.mes.focus();
-     totbe=0;   
+     totbe=0;
 }
 
 if ((editnota.any.value == "") || (isNaN(editnota.any.value))) {
-     alert ('ANY ha de ser un valor numèric entre 0 i 99'); 
+     alert ('ANY ha de ser un valor numèric entre 0 i 99');
 	  editnota.any.focus();
-     totbe=0;   
+     totbe=0;
 }
 
 
 if (totbe==1) {
-form.submit(); 
+form.submit();
 	}
-	
+
 }
 
 </script>
@@ -109,9 +109,9 @@ form.submit();
 <?php include 'menu.php'; ?>
 <div class="pagina" style="margin-top: 10px;">
 <div class="contenidor_1" style="border: 1px solid #a74fd7;">
-<p class='path'> 
-><a href='admint.php'>administració</a> 
->><a href='notes.php'>introduir notes a l'escriptori</a> 
+<p class='path'>
+><a href='admint.php'>administració</a>
+>><a href='notes.php'>introduir notes a l'escriptori</a>
  <?php echo $link; ?>
 </p>
 <p class="h1" style="background: #a74fd7; text-align: left; padding-left: 20px;">
@@ -124,23 +124,23 @@ if ($nom!="")
 	if (!$num)
 	{
 		$taula= "SELECT nom FROM notescrip WHERE nom='$nom'";
-		$result=mysql_query($taula);
-		if (!$result) { die('Invalid query taula: ' . mysql_error());}
+		$result=mysqli_query($conn,$taula);
+		if (!$result) { die('Invalid query taula: ' . mysqli_error($conn));}
 
-		$check=mysql_numrows($result);
-		if ($check != 0) 
+		$check=mysqli_num_rows($result);
+		if ($check != 0)
 		{
 		echo "<p class='error' style='font-size: 14px;'>El NOM ".$supernom." ja existeix.</p>
-		<p class='error' style='font-size: 14px;'>Hauries d'usar-ne un altre o editar el que ja existeix:</p> 
+		<p class='error' style='font-size: 14px;'>Hauries d'usar-ne un altre o editar el que ja existeix:</p>
 		<p class='error' style='font-size: 14px;'><a href='notes.php'>Torna enrera</a></p>";
 		}
 		else
 		{
 		$query3="INSERT INTO notescrip (nom,text,tipus,caducitat)
 		VALUES ('$nom', '$text', '$tipus', '$data')";
-		mysql_query($query3) or die('Error, la inserció de dades query3 no ha estat possible');
+		mysqli_query($conn,$query3) or die('Error, la inserció de dades query3 no ha estat possible');
 
-		echo "<p class='error' style='font-size: 14px;'>La nota anomenada ".$supernom." 
+		echo "<p class='error' style='font-size: 14px;'>La nota anomenada ".$supernom."
 		s'ha guardat satisfactòriament</p>";
 		}
 	}
@@ -149,9 +149,9 @@ if ($nom!="")
 		$query2="UPDATE notescrip
 		SET nom='$nom', text='$text', tipus='$tipus', caducitat='$data'
 		WHERE numero='$num'";
-		mysql_query($query2) or die("Error, no s'han pogut modificar les dades");
+		mysqli_query($conn,$query2) or die("Error, no s'han pogut modificar les dades");
 
-		echo "<p class='error' style='font-size: 14px;'>Les dades de la nota ".$num." - ".$nom." 
+		echo "<p class='error' style='font-size: 14px;'>Les dades de la nota ".$num." - ".$nom."
 		s'han guardat satisfactòriament</p>";
 
 		echo '<table width="70%" align="center" class="cos2" style="margin-bottom: 20px;">
@@ -170,7 +170,7 @@ else
 		if ($del!="")
 		{
 			$query2="DELETE FROM notescrip WHERE numero='$numnota'";
-			mysql_query($query2) or die("Error, no s'han pogut borrar les dades");
+			mysqli_query($conn,$query2) or die("Error, no s'han pogut borrar les dades");
 			die ("<p class='error' style='font-size: 14px;'>
 			La nota numero ".$numnota." s'ha eliminat satisfactòriament
 			</p>");
@@ -178,10 +178,10 @@ else
 		else
 		{
 		$select= "SELECT * FROM notescrip WHERE numero='$numnota'";
-		$query=mysql_query($select);
-		if (!$query) {die('Invalid query: ' . mysql_error());}
-    
-		list($num,$nom,$text,$tipus,$caduc)=mysql_fetch_row($query);
+		$query=mysqli_query($conn,$select);
+		if (!$query) {die('Invalid query: ' . mysqli_error($conn));}
+
+		list($num,$nom,$text,$tipus,$caduc)=mysqli_fetch_row($query);
 		list($any, $mes, $dia) = explode("-", $caduc);
 		$caduc2=$dia."-".$mes.'-'.$any;
 		}
@@ -224,8 +224,8 @@ echo "<option value='esquerra' selected>esquerra";
 </SELECT></td></tr>
 
 <tr><td class="cos_majus">Caducitat:</td>
-<td><input value="<?php echo $dia; ?>" align="right" name="dia" id="dia" type="TEXT" maxlength="2" size="2"> 
- - <input value="<?php echo $mes; ?>" align="right" name="mes" id="mes" type="TEXT" maxlength="2" size="2"> 
+<td><input value="<?php echo $dia; ?>" align="right" name="dia" id="dia" type="TEXT" maxlength="2" size="2">
+ - <input value="<?php echo $mes; ?>" align="right" name="mes" id="mes" type="TEXT" maxlength="2" size="2">
  - <input value="<?php echo $any; ?>" align="right" name="any" id="any" type="TEXT" maxlength="2" size="2">
 </td></tr>
 
@@ -237,8 +237,8 @@ echo "<option value='esquerra' selected>esquerra";
 </div></div></div>
 </table>
 
-<?php 
-	} 
+<?php
+	}
 ?>
 
 </body>
@@ -247,9 +247,9 @@ echo "<option value='esquerra' selected>esquerra";
 
 <?php
 include 'config/disconect.php';
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>
 

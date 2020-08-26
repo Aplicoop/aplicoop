@@ -30,7 +30,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
             <p class="h1" style="background: red; text-align: left; padding-left: 20px;">
                 Crear, editar i eliminar grups
-<span style="display: inline; float: right; text-align: center; vertical-align: middle; 
+<span style="display: inline; float: right; text-align: center; vertical-align: middle;
 padding: 2px 50px 2px 0px;">
 <input class="button2" style="width:150px;" type="button" value="CREAR GRUP NOU"
        onClick="javascript:window.location = 'creategrups.php';">
@@ -42,8 +42,8 @@ padding: 2px 50px 2px 0px;">
             if ($elim != "") {
                 $select = "SELECT grup FROM proces_linia
 	WHERE grup='" . $elim . "' ";
-                $result = mysql_query($select) or die("Query failed. " . mysql_error());
-                if (mysql_num_rows($result) >= 1) {
+                $result = mysqli_query($conn,$select) or die("Query failed. " . mysqli_error($conn));
+                if (mysqli_num_rows($result) >= 1) {
                     die
                     ("	<p class='comment'>El grup " . $elim . " està associat a processos i categories.<br/>
    				Hauries de borrar les associacions en primer terme.<br/>
@@ -51,7 +51,7 @@ padding: 2px 50px 2px 0px;">
                 } else {
                     $query4 = "DELETE FROM grups
 					WHERE nom='" . $elim . "' ";
-                    mysql_query($query4) or die('Error, insert query4 failed');
+                    mysqli_query($conn,$query4) or die('Error, insert query4 failed');
                     echo "<p class='comment'>El grup " . $elim . " s'ha eliminat</p>";
                 }
             }
@@ -71,12 +71,12 @@ padding: 2px 50px 2px 0px;">
                     $taula = "SELECT nom, actiu, notes FROM grups
 		ORDER BY actiu,nom";
 
-                    $result = mysql_query($taula);
+                    $result = mysqli_query($conn,$taula);
                     if (!$result) {
-                        die('Invalid query: ' . mysql_error());
+                        die('Invalid query: ' . mysqli_error($conn));
                     }
 
-                    while (list($nom, $actiu, $notes) = mysql_fetch_row($result))
+                    while (list($nom, $actiu, $notes) = mysqli_fetch_row($result))
                     {
 
                     ?>

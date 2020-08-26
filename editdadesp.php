@@ -79,10 +79,10 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 	SET tipus='" . $p_tip . "', tipus2='" . $p_tip2 . "', dia='" . $p_dia . "', components='" . $p_comp . "',
 	tel1='" . $p_tlf1 . "', tel2='" . $p_tlf2 . "', email1='" . $p_email1 . "', email2='" . $p_email2 . "',
 	nomf='" . $p_nomf . "', adressf='" . $p_adressf . "', niff='" . $p_niff . "',
-	nota='" . $p_nota . "', kuota='" . $p_kuota . "', IBAN='" . $p_IBAN . "', domiciliacion='" . $p_domiciliacion . "', fechaalta='" . $p_fechaalta . "' 
+	nota='" . $p_nota . "', kuota='" . $p_kuota . "', IBAN='" . $p_IBAN . "', domiciliacion='" . $p_domiciliacion . "', fechaalta='" . $p_fechaalta . "'
  	WHERE nom='" . $nom . "' ";
 
-                        mysql_query($query2) or die('Error, insert query2 failed');
+                        mysqli_query($conn,$query2) or die('Error, insert query2 failed');
 
                         echo "<p class='alert alert--info'>Los cambios de la familia " . $supernom . " se han guardado correctamente.</p>";
 
@@ -94,13 +94,13 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                     $select = "SELECT nom,tipus,tipus2,dia,components,tel1,tel2,email1,email2,nomf,adressf,niff,nota,kuota,IBAN,domiciliacion,fechaalta
 FROM usuaris WHERE nom='$nom'";
 
-                    $query = mysql_query($select);
+                    $query = mysqli_query($conn,$select);
 
                     if (!$query) {
-                        die('Invalid query: ' . mysql_error());
+                        die('Invalid query: ' . mysqli_error($conn));
                     }
 
-                    list($nom, $tip, $tip2, $dia, $comp, $tlf1, $tlf2, $email1, $email2, $nomf, $adressf, $niff, $nota, $kuota, $IBAN, $domiciliacion,$fechaalta) = mysql_fetch_row($query);
+                    list($nom, $tip, $tip2, $dia, $comp, $tlf1, $tlf2, $email1, $email2, $nomf, $adressf, $niff, $nota, $kuota, $IBAN, $domiciliacion,$fechaalta) = mysqli_fetch_row($query);
 
                     if ($nom == "" OR $nom == $user) {
                         $hidden = '<input type="hidden" name="tip2" id="tip2" value="' . $tip2 . '">';
@@ -145,12 +145,12 @@ FROM usuaris WHERE nom='$nom'";
 
                                 <?php
                                 $select3 = "SELECT nom FROM grups ORDER BY nom";
-                                $query3 = mysql_query($select3);
+                                $query3 = mysqli_query($conn,$select3);
                                 if (!$query3) {
-                                    die('Invalid query3: ' . mysql_error());
+                                    die('Invalid query3: ' . mysqli_error($conn));
                                 }
 
-                                while (list($sgrup) = mysql_fetch_row($query3)) {
+                                while (list($sgrup) = mysqli_fetch_row($query3)) {
                                     if ($dia == $sgrup) {
                                         echo '<option value="' . $sgrup . '" selected>' . $sgrup . '</option>';
                                     } else {

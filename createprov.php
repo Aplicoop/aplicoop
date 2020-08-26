@@ -37,21 +37,21 @@ var totbe=1;
 if (nouprov.nom.value == ""){
      alert("NOM no pot estar buit");
      nouprov.nom.focus();
-     totbe=0;   
-}else{   
-	for ( i = 0; i < nouprov.nom.value.length; i++ ) {  
-     if ( nouprov.nom.value.charAt(i) == " " ) {  
+     totbe=0;
+}else{
+	for ( i = 0; i < nouprov.nom.value.length; i++ ) {
+     if ( nouprov.nom.value.charAt(i) == " " ) {
          alert("NOM no pot tenir espais en blanc");
          nouprov.nom.focus();
-         totbe=0;  
+         totbe=0;
          break;
-         }  
+         }
      }
-     
+
 }
 
 if (totbe==1){
-form.submit(); 
+form.submit();
 	}
 }
 
@@ -64,7 +64,7 @@ function validar(e) { // 1
     patron =/[A-Za-z\s]/; // 4
     te = String.fromCharCode(tecla); // 5
     return patron.test(te); // 6
-} 
+}
 
 
 
@@ -76,9 +76,9 @@ function validar(e) { // 1
 <div class="pagina" style="margin-top: 10px;">
 <div class="contenidor_1" style="border: 1px solid #990000">
 
-<p class='path'> 
+<p class='path'>
 ><a href='admint.php'>administració</a>
->><a href='proveidores.php'>editar, crear, eliminar proveïdores</a> 
+>><a href='proveidores.php'>editar, crear, eliminar proveïdores</a>
  >>><a href='createprov.php'>crear nova proveïdora</a>
 </p>
 <p class="h1" style="background: #990000; text-align: left; padding-left: 20px;">
@@ -93,11 +93,11 @@ if ($pnom !="")
 {
 	include 'config/configuracio.php';
 	$taula= "SELECT nom FROM proveidores WHERE nom='$pnom'";
-	$result=mysql_query($taula);
-	if (!$result) {die('Invalid query taula: ' . mysql_error());}
+	$result=mysqli_query($conn,$taula);
+	if (!$result) {die('Invalid query taula: ' . mysqli_error($conn));}
 
-	$check=mysql_numrows($result);
-	if ($check != 0) 
+	$check=mysqli_num_rows($result);
+	if ($check != 0)
 	{
 		echo "<td><p align='center' class='Estilo1'>La proveïdora ".$supernom." no es pot crear de nou perquè ja existeix.</p>";
 	}
@@ -105,10 +105,10 @@ if ($pnom !="")
 	{
 		$query = "INSERT INTO proveidores (nom, actiu, nomcomplert, contacte, adress, telf1, telf2, fax, web, email1, email2, notes)
 			VALUES ('$pnom', '$pactiu', '$pnomcomplert', '$pcontacte', '$padress', '$ptelf1', '$ptelf2', '$pfax', '$pweb', '$pemail1', '$pemail2', '$pnotes')";
-		mysql_query($query) or die('Error, la inserció de dades a query no ha estat possible');
-		
-		
-		echo "<p class='comment'>Les dades de l'empresa o persona proveïdora ".$supernom." 
+		mysqli_query($conn,$query) or die('Error, la inserció de dades a query no ha estat possible');
+
+
+		echo "<p class='comment'>Les dades de l'empresa o persona proveïdora ".$supernom."
 				s'han guardat satisfactòriament</p>";
 		echo "<p class='cos2'>Nom:".$pnom."</p>";
 		echo "<p class='cos2'>Actiu:".$pactiu."</p>";
@@ -161,12 +161,12 @@ no<input type="radio" name="actiu" value="desactivat" id="actiu" >
 <p class="cos2" style="clear: both; text-align: center; padding: 0px 100px;">
 Per crear una nova proveïdora clica el botó ACCEPTAR al final de la fitxa.
 <br/>
-(*) el NOM és un codi per reconèixer la proveïdora. 
-Ha d'anar tot en minuscules, sense espais en blanc, ni signes que no siguin lletres 
+(*) el NOM és un codi per reconèixer la proveïdora.
+Ha d'anar tot en minuscules, sense espais en blanc, ni signes que no siguin lletres
 (ni ç, ni ñ, ni accents).
 </p>
 
-<?php 
+<?php
 }
 ?>
 
@@ -175,8 +175,8 @@ Ha d'anar tot en minuscules, sense espais en blanc, ni signes que no siguin llet
 </html>
 
 <?php
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>

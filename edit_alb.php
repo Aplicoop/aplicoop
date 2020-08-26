@@ -80,31 +80,31 @@ var x = new Array();
 var nom = new Array();
 
 if (jprov.value== "") {
-     alert ('Has d\'elegir una proveïdora'); 
+     alert ('Has d\'elegir una proveïdora');
 	  jprov.focus();
      return false;
 }
 
 if (jdata.value== "") {
-     alert ('Has d\'introduir la data de l\'albarà'); 
+     alert ('Has d\'introduir la data de l\'albarà');
 	  jdata.focus();
      return false;
 }
 
 if (isNaN(jtotsi.value)) {
-     alert ('El total sense iva ha de ser un valor numèric. El punt decimal no pot ser una coma.'); 
+     alert ('El total sense iva ha de ser un valor numèric. El punt decimal no pot ser una coma.');
 	  jtotsi.focus();
      return false;
 }
 
 if (isNaN(jtotiva.value)) {
-     alert ('El total d\'iva ha de ser un valor numèric. El punt decimal no pot ser una coma.'); 
+     alert ('El total d\'iva ha de ser un valor numèric. El punt decimal no pot ser una coma.');
 	  jtotiva.focus();
      return false;
 }
 
 if (isNaN(jtot.value)) {
-     alert ('El total amb iva ha de ser un valor numèric. El punt decimal no pot ser una coma.'); 
+     alert ('El total amb iva ha de ser un valor numèric. El punt decimal no pot ser una coma.');
 	  jtot.focus();
      return false;
 }
@@ -114,7 +114,7 @@ x[i] = document.getElementById("num"+i).value;
 nom[i]= document.getElementById("nom"+i).value;
 
 if (isNaN(x[i])) {
-alert ('A ' + nom[i] + ': només s/accepten numeros i el punt decimal'); 
+alert ('A ' + nom[i] + ': només s/accepten numeros i el punt decimal');
 document.getElementById("num"+i).focus();
 return false;
 break;
@@ -123,7 +123,7 @@ break;
 }
 
 return true;
-	
+
 }
 
 </script>
@@ -141,21 +141,21 @@ $st3="";
 
 <body>
 
-<FORM action="edit_alb.php?id=<?php echo $num_alb; ?>"  method="POST" name="noualbara" id="noualbara" 
+<FORM action="edit_alb.php?id=<?php echo $num_alb; ?>"  method="POST" name="noualbara" id="noualbara"
 	onSubmit="return validar_Form();">
 <div class="pagina" style="margin-top: 10px;">
 <div class="contenidor_1" style="border: 1px solid #990000">
 
-<p class='path'> 
+<p class='path'>
 ><a href='admint.php'>administració</a>
 >><a class='Estilo2' href='albarans.php'>llistat d'albarans</a>
-<?php echo $st3; ?> 
+<?php echo $st3; ?>
 </P>
 <p class="h1" style="background: #990000; text-align: left; padding-left: 20px;">
 Editar albarà <?php echo $num_alb; ?>
-<span style="display: inline; float: right; text-align: center; vertical-align: middle; 
+<span style="display: inline; float: right; text-align: center; vertical-align: middle;
 padding: 2px 50px 2px 0px;">
-<input class="button2" type="button" value="ELIMINAR" 
+<input class="button2" type="button" value="ELIMINAR"
 onClick="var answer = confirm ('Estas segur de borrar aquest albarà <?php echo $num_alb; ?>!!');
 				if (answer)
 					{window.location = 'edit_alb.php?id=<?php echo $num_alb; ?>&id2=elim';}">
@@ -166,29 +166,29 @@ onClick="var answer = confirm ('Estas segur de borrar aquest albarà <?php echo 
 if ($elim!="")
 {
 	$delete= "DELETE FROM albara WHERE numero='$num_alb'";
-	mysql_query($delete) or die('Invalid query deleting table1: ' . mysql_error());
-	
-	$select="SELECT producte, quantitat FROM albara_linia WHERE numero='$num_alb'";
-	$result = mysql_query($select);
-	if (!$result) {die("Ha fallat result:" .mysql_error());} 
+	mysqli_query($conn,$delete) or die('Invalid query deleting table1: ' . mysqli_error($conn));
 
-	while (list($snomprod,$squant)=mysql_fetch_row($result))
-	{	
+	$select="SELECT producte, quantitat FROM albara_linia WHERE numero='$num_alb'";
+	$result = mysqli_query($conn,$select);
+	if (!$result) {die("Ha fallat result:" .mysqli_error($conn));}
+
+	while (list($snomprod,$squant)=mysqli_fetch_row($result))
+	{
 		$query5= "SELECT pr.nom,pr.categoria,cat.estoc
-			FROM productes AS pr, categoria AS cat 
+			FROM productes AS pr, categoria AS cat
 			WHERE pr.nom='$snomprod' AND pr.categoria=cat.tipus";
-		$result5=mysql_query($query5);
+		$result5=mysqli_query($conn,$query5);
 		if (!$result5) { die("Query5 to show fields from table failed");}
-		list($v1,$v2,$sestoc)=mysql_fetch_row($result5);
+		list($v1,$v2,$sestoc)=mysqli_fetch_row($result5);
 		if ($sestoc=='si')
 		{
 			$query8 = "UPDATE productes SET estoc=estoc-'$squant' WHERE nom='$snomprod'";
-			mysql_query($query8) or die('Error, update query8 failed');
+			mysqli_query($conn,$query8) or die('Error, update query8 failed');
 		}
 	}
 
 	$delete2= "DELETE FROM albara_linia WHERE numero='$num_alb'";
-	mysql_query($delete2) or die('Invalid query deleting table2: ' . mysql_error());
+	mysqli_query($conn,$delete2) or die('Invalid query deleting table2: ' . mysqli_error($conn));
 
 	die ('<p class="comment">
 			L\'albarà '.$num_alb.' ha estat eliminat</p>');
@@ -200,8 +200,8 @@ if ($files!="")
 {
 	$query="UPDATE albara SET data='$pdataintro',totsi='$ptotsi',totiva='$ptotiva',tot='$ptot',notes='$pnotes'
 	WHERE numero='$num_alb'";
-	mysql_query($query) or die('Error, la inserció de dades no ha estat possible');
-		
+	mysqli_query($conn,$query) or die('Error, la inserció de dades no ha estat possible');
+
 	echo '<table style="padding: 10px;" width="70%" align="center" cellspading="5" cellspacing="5" >
 				<tr>
 				<td align="left" class="cos_majus">Albarà numero:'.$num_alb.'</td>
@@ -212,46 +212,46 @@ if ($files!="")
 	echo '<table style="padding: 10px;" width="70%" align="center" cellspading="5" cellspacing="5" >
 				<tr><td align="left" class="cos">';
 	$query6= "SELECT nom	FROM productes WHERE proveidora='$pprov'";
-	$result6=mysql_query($query6);
-	if (!$result6) { die("Query6 to show fields from table failed");}	
-	$contador=mysql_num_rows($result6);
-				
-	for ($i=0; $i<$contador; $i++) 
-	{	
+	$result6=mysqli_query($conn,$query6);
+	if (!$result6) { die("Query6 to show fields from table failed");}
+	$contador=mysqli_num_rows($result6);
+
+	for ($i=0; $i<$contador; $i++)
+	{
 		if ($numprevi[$i]!="")
 		   {
 				$delete2= "DELETE FROM albara_linia WHERE numero='$num_alb' AND producte='$nomp[$i]'";
-				mysql_query($delete2) or die('Invalid query deleting table2: ' . mysql_error());		   	
+				mysqli_query($conn,$delete2) or die('Invalid query deleting table2: ' . mysqli_error($conn));
 		   	$query5= "SELECT pr.nom,pr.categoria,cat.estoc
-				FROM productes AS pr, categoria AS cat 
+				FROM productes AS pr, categoria AS cat
 				WHERE pr.nom='$nomp[$i]' AND pr.categoria=cat.tipus";
-				$result5=mysql_query($query5);
+				$result5=mysqli_query($conn,$query5);
 				if (!$result5) { die("Query5 to show fields from table failed");}
-				list($v1,$v2,$sestoc)=mysql_fetch_row($result5);
+				list($v1,$v2,$sestoc)=mysqli_fetch_row($result5);
 				if ($sestoc=='si')
 				{
 		  		 	$query6 = "UPDATE productes SET estoc=estoc-'$numprevi[$i]' WHERE nom='$nomp[$i]'";
-					mysql_query($query6) or die('Error, update query6 failed');
+					mysqli_query($conn,$query6) or die('Error, update query6 failed');
 				}
-		   }				
-		if ($num[$i] != "") 
+		   }
+		if ($num[$i] != "")
 		{
-			$query4 = "INSERT INTO albara_linia(numero, producte, quantitat) 
+			$query4 = "INSERT INTO albara_linia(numero, producte, quantitat)
 			VALUES ('$num_alb', '$nomp[$i]', '$num[$i]')";
-			mysql_query($query4) or die('Error, insert4 query failed');
-			
+			mysqli_query($conn,$query4) or die('Error, insert4 query failed');
+
 			$query5= "SELECT pr.nom,pr.categoria,cat.estoc
-				FROM productes AS pr, categoria AS cat 
+				FROM productes AS pr, categoria AS cat
 				WHERE pr.nom='$nomp[$i]' AND pr.categoria=cat.tipus";
-			$result5=mysql_query($query5);
+			$result5=mysqli_query($conn,$query5);
 			if (!$result5) { die("Query5 to show fields from table failed");}
-			list($v1,$v2,$sestoc)=mysql_fetch_row($result5);
+			list($v1,$v2,$sestoc)=mysqli_fetch_row($result5);
 			if ($sestoc=='si')
 				{
 					$query7 = "UPDATE productes SET estoc=estoc+'$num[$i]' WHERE nom='$nomp[$i]'";
-					mysql_query($query7) or die('Error, update query7 failed');
+					mysqli_query($conn,$query7) or die('Error, update query7 failed');
 				}
-							
+
 			print ('<p align="left">- '.$num[$i].' '.$unitat[$i].' de '.$nomp[$i].'.</p>');
 		}
 	}
@@ -265,7 +265,7 @@ if ($files!="")
 				<tr>
 				<td align="left" class="cos">Comentaris:'.$pnotes.'</td>
 				<td></td><td></td>
-				</tr>	
+				</tr>
 				</table>';
 }
 else
@@ -278,24 +278,24 @@ else
 
 <?php
 
-	$sel2 = "SELECT proveidora,data,totsi,totiva,tot,notes 
+	$sel2 = "SELECT proveidora,data,totsi,totiva,tot,notes
 	FROM albara WHERE numero='$num_alb'";
-	$result2 = mysql_query($sel2);
-	if (!$result2) {die('Invalid query2: ' . mysql_error());} 
-	list($snomprov,$sdataintro,$stotsi,$stotiva,$stot,$snotes) = mysql_fetch_row($result2);
+	$result2 = mysqli_query($conn,$sel2);
+	if (!$result2) {die('Invalid query2: ' . mysqli_error($conn));}
+	list($snomprov,$sdataintro,$stotsi,$stotiva,$stot,$snotes) = mysqli_fetch_row($result2);
 	$sdata2 = explode ("-",$sdataintro);
 	$sdata = $sdata2[2].'/'.$sdata2[1].'/'.$sdata2[0];
 
 ?>
 <tr>
-<td align="left" width="50%" class="cos_majus">Numero: <input align="right" value="<?php echo $num_alb; ?>" name="num_alb" id="num_alb" type="TEXT" 
+<td align="left" width="50%" class="cos_majus">Numero: <input align="right" value="<?php echo $num_alb; ?>" name="num_alb" id="num_alb" type="TEXT"
 	maxlength="10" size="5" readOnly>
 </td>
-<td align="left" width="50%" class="cos_majus">Proveïdora:<input align="right" value="<?php echo $snomprov; ?>" name="prov" id="prov" type="TEXT" 
+<td align="left" width="50%" class="cos_majus">Proveïdora:<input align="right" value="<?php echo $snomprov; ?>" name="prov" id="prov" type="TEXT"
 	maxlength="10" size="5" readOnly>
 </td></tr>
 <tr>
-<td align="left" class="cos_majus">Data: 
+<td align="left" class="cos_majus">Data:
 	<input type="text" value="<?php echo $sdata; ?>" name="data" id="f_date_a" size="8" maxlength="10" readonly />
 	<button type="text" name="budi" id="f_trigger_a">...</button>
 	<script type="text/javascript">
@@ -310,10 +310,10 @@ else
 	</td><td></td>
 	</tr>
 
-	<tr><td class="cos_majus">Total sense iva: <input align="right" value="<?php echo $stotsi; ?>" name="totsi" id="totsi" type="TEXT" 
+	<tr><td class="cos_majus">Total sense iva: <input align="right" value="<?php echo $stotsi; ?>" name="totsi" id="totsi" type="TEXT"
 	maxlength="10" size="5" onChange="return checktotal()">
 	</td>
-	<td class="cos_majus">Total iva: <input align="right" value="<?php echo $stotiva; ?>" name="totiva" id="totiva" type="TEXT" 
+	<td class="cos_majus">Total iva: <input align="right" value="<?php echo $stotiva; ?>" name="totiva" id="totiva" type="TEXT"
 	maxlength="10" size="5" onChange="return checktotal()">
 	</td></tr>
 
@@ -328,24 +328,24 @@ else
 	<div id="contenidor_1" style="height: 210px; overflow: scroll; overflow-x: hidden;">
 <table style="padding: 10px;" width="80%" align="center" cellspading="5" cellspacing="5" >
 <?php
-	$sel3 = "SELECT nom,unitat 
+	$sel3 = "SELECT nom,unitat
 	FROM productes
 	WHERE proveidora='$snomprov'
 	ORDER BY nom";
-	$result3 = mysql_query($sel3);
-	if (!$result3) {die('Invalid query3: ' . mysql_error());}
+	$result3 = mysqli_query($conn,$sel3);
+	if (!$result3) {die('Invalid query3: ' . mysqli_error($conn));}
 
 	print ('<tr class="cos_majus"><td width="40%" align="left">Producte</td><td width="20%" align="center">Quantitat</td>
 	<td width="20%" align="left">Unitat</td></tr>');
 	$id=0; $contador=0;
-	while(list($ssnomprod,$ssunitat) = mysql_fetch_row($result3))
+	while(list($ssnomprod,$ssunitat) = mysqli_fetch_row($result3))
 	{
-		$sel4 = "SELECT quantitat   
+		$sel4 = "SELECT quantitat
 		FROM albara_linia
 		WHERE producte='$ssnomprod' AND numero='$num_alb'";
-		$result4 = mysql_query($sel4);
-		if (!$result4) {die('Invalid query4: ' . mysql_error());}
-		list($quant)=mysql_fetch_row($result4);
+		$result4 = mysqli_query($conn,$sel4);
+		if (!$result4) {die('Invalid query4: ' . mysqli_error($conn));}
+		list($quant)=mysqli_fetch_row($result4);
 		$qdec="";
 		if ($quant!="")
 		{
@@ -354,14 +354,14 @@ else
 			$r1=round($quant, 1)*1000;
 			$r0=round($quant)*1000;
 			$rb=$quant*1000;
-			if ($rb==$r0) 
+			if ($rb==$r0)
 			{
 				$nd=0;
 			}
-			else 
+			else
 			{
 				if ($rb==$r1) {$nd=1;}
-				else 
+				else
 				{
 					if ($rb==$r2) {$nd=2;}
 					else {$nd=3;}
@@ -370,10 +370,10 @@ else
 			$qdec=round($quant, $nd);
 			//////////////////////////////////////
 		}
-		
+
 		print('<tr class="cos"><td>'.$ssnomprod.': <input type=hidden name="nomp[]" id="nom'.$id.'" value="'.$ssnomprod.'"></td>
 		<td><input align="center" name="num[]" id="num'.$id.'" value="'.$qdec.'" type="TEXT" maxlength="8" size="5"></td>
-		    <input type=hidden name="numprevi[]" id="numprevi'.$id.'" value="'.$quant.'"> 
+		    <input type=hidden name="numprevi[]" id="numprevi'.$id.'" value="'.$quant.'">
 		<td>'.$ssunitat.' <input type=hidden name="uni[]" id="uni'.$id.'" value="'.$ssunitat.'">
 		</td></tr>');
    	$contador++;
@@ -400,8 +400,8 @@ Per elimar l'albarà clica el botó ELIMINAR.</p>
 <?php
 }
 include 'config/disconect.php';
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>

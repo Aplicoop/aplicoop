@@ -151,19 +151,19 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                 <?php
                 $sel5 = "SELECT dia FROM usuaris WHERE nom='$user'";
-                $result5 = mysql_query($sel5);
+                $result5 = mysqli_query($conn,$sel5);
                 if (!$result5) {
-                    die('Invalid query5: ' . mysql_error());
+                    die('Invalid query5: ' . mysqli_error($conn));
                 }
-                list($grup) = mysql_fetch_row($result5);
+                list($grup) = mysqli_fetch_row($result5);
 
                 $sel6 = "SELECT tipus, data_inici, data_fi, periode, dia_recollida, dia_tall, hora_tall
                 FROM processos WHERE nom='$proces' AND grup='$grup'";
-                $result6 = mysql_query($sel6);
+                $result6 = mysqli_query($conn,$sel6);
                 if (!$result6) {
-                    die('Invalid query6: ' . mysql_error());
+                    die('Invalid query6: ' . mysqli_error($conn));
                 }
-                list($tipus, $datai, $dataf, $periode, $diare, $diat, $horat) = mysql_fetch_row($result6);
+                list($tipus, $datai, $dataf, $periode, $diare, $diat, $horat) = mysqli_fetch_row($result6);
 
                 $title = $proces . " / grupo " . $grup;
 
@@ -223,23 +223,23 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                             <?php
                             $sel = "SELECT categoria FROM proces_linia WHERE proces='$proces' AND grup='$grup' AND actiu='activat' ORDER BY ordre";
-                            $result = mysql_query($sel);
+                            $result = mysqli_query($conn,$sel);
                             if (!$result) {
-                                die('Invalid query: ' . mysql_error());
+                                die('Invalid query: ' . mysqli_error($conn));
                             }
                             $id = 0;
-                            while (list($cat) = mysql_fetch_row($result)) {
+                            while (list($cat) = mysqli_fetch_row($result)) {
                                 print ('<li class="accordion-item">
                                     <input type="checkbox"  class="accordion-check" checked>
                                     <i class="accordion-icon"></i>
                                     <h2 class="accordion-title box-subtitle">' . $cat . '</h2>');
                                 //added
                                 $selectsubcategorias = "SELECT subcategoria FROM subcategoria WHERE categoria='$cat'";
-                                $ressubcat = mysql_query($selectsubcategorias);
+                                $ressubcat = mysqli_query($conn,$selectsubcategorias);
                                 if (!$ressubcat) {
-                                    die('Invalid querysubcat: '  . mysql_error());
+                                    die('Invalid querysubcat: '  . mysqli_error($conn));
                                 }
-                                while (list($subcate) = mysql_fetch_row($ressubcat)) {
+                                while (list($subcate) = mysqli_fetch_row($ressubcat)) {
                                     print ('<ul class="accordion">
                                         <li class="accordion-item">
 
@@ -252,12 +252,12 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                                 $sel2 = "SELECT pr.ref,pr.nom,pr.unitat,pr.proveidora,ctg.tipus,ctg.estoc,pr.subcategoria,pr.preusi,pr.iva,
                                 pr.marge, pr.descompte,pr.estoc, pr.labels FROM productes AS pr, categoria AS ctg
                                 WHERE pr.categoria=ctg.tipus AND pr.categoria='$cat' AND pr.actiu='actiu'  ORDER BY pr.categoria, pr.nom ";
-                                $result2 = mysql_query($sel2);
+                                $result2 = mysqli_query($conn,$sel2);
                                 if (!$result2) {
-                                    die('Invalid query2: ' . mysql_error());
+                                    die('Invalid query2: ' . mysqli_error($conn));
                                 }
                                 print ('<ul class="accordion-section row">');
-                                while (list($ref, $nomprod, $unitat, $prov, $categ, $ctg_estoc, $subcat, $preu, $iva, $marge, $descompte, $pr_estoc, $labels) = mysql_fetch_row($result2)) {
+                                while (list($ref, $nomprod, $unitat, $prov, $categ, $ctg_estoc, $subcat, $preu, $iva, $marge, $descompte, $pr_estoc, $labels) = mysqli_fetch_row($result2)) {
                                     //// En els productes d'estoc, apareix l'estoc ////
                                     //// Si l'estoc es negatiu apareix en gris ////
                                     if ($ctg_estoc == 'si') {
@@ -276,11 +276,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                                         $qdec = "";
                                     } else {
                                         $sel3 = "SELECT quantitat FROM comanda_linia WHERE numero='$numcmda' AND ref='$ref'";
-                                        $result3 = mysql_query($sel3);
+                                        $result3 = mysqli_query($conn,$sel3);
                                         if (!$result3) {
-                                            die('Invalid query3: ' . mysql_error());
+                                            die('Invalid query3: ' . mysqli_error($conn));
                                         }
-                                        list ($quantitat) = mysql_fetch_row($result3);
+                                        list ($quantitat) = mysqli_fetch_row($result3);
                                         $qdec = "";
                                         if ($quantitat != "") {
                                             /// per veure la quantitat amb els decimals imprescindibles /////
@@ -449,12 +449,12 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                     $sel = "SELECT numero
                     FROM comanda
                     WHERE usuari='$user' AND proces='$proces' AND grup='$grup' AND data='$bd_data'";
-                    $result = mysql_query($sel);
+                    $result = mysqli_query($conn,$sel);
                     if (!$result) {
-                        die('Invalid query: ' . mysql_error());
+                        die('Invalid query: ' . mysqli_error($conn));
                     }
 
-                    list ($numcmda1) = mysql_fetch_row($result);
+                    list ($numcmda1) = mysqli_fetch_row($result);
 
                     if ($numcmda1 != "") {
                         echo '<p class="alert alert--error">
@@ -478,8 +478,8 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                     /// o la data de recollida si és un procés continu setmanal ///
                     $query2 = "INSERT INTO `comanda` ( `usuari` , `proces`, `grup`, `sessionid` , `data` )
                     VALUES ('$user', '$proces', '$grup', '$sessionid', '$bd_data')";
-                    mysql_query($query2) or die('Error, insert query2 failed.');
-                    $numcmda = mysql_insert_id();
+                    mysqli_query($conn,$query2) or die('Error, insert query2 failed.');
+                    $numcmda = mysqli_insert_id();
                     $ver_datase = date("d-m-Y");
                     $notescmda = "";
                     $familia = $user;
@@ -496,8 +496,8 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 FROM comanda AS c, session AS s
                 WHERE c.numero='$numcmda' AND c.sessionid=s.sessionid";
 
-                $query3 = mysql_query($sel3) or die(mysql_error());
-                list($familia, $bd_data, $sessionid, $notescmda, $bd_datase) = mysql_fetch_row($query3);
+                $query3 = mysqli_query($conn,$sel3) or die(mysqli_error($conn));
+                list($familia, $bd_data, $sessionid, $notescmda, $bd_datase) = mysqli_fetch_row($query3);
                 $superfam = strtoupper($familia);
                 $time_dataf = strtotime($bd_data);
                 $data = date("d-m-Y", $time_dataf);
@@ -603,15 +603,15 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                             // Entren quantitats de productes, en el cas que exiteixin POST //
                             //////////////////////////////////////////////////////////////////
                             $sel4 = "SELECT numero FROM comanda_linia WHERE numero='$numcmda'";
-                            $query4 = mysql_query($sel4) or die(mysql_error());
-                            list($cl_num) = mysql_fetch_row($query4);
+                            $query4 = mysqli_query($conn,$sel4) or die(mysqli_error($conn));
+                            list($cl_num) = mysqli_fetch_row($query4);
                             $cl_num_ver = count($cl_num);
                             if ($cl_num_ver != 0) {
                                 ///////////////////////////////////////////////////////////////
                                 // Si estem reeditant, primer borrem les quantitats antigues //
                                 ///////////////////////////////////////////////////////////////
                                 $query5 = "DELETE FROM comanda_linia WHERE numero='$numcmda'";
-                                mysql_query($query5) or die('Error, delete query5 failed');
+                                mysqli_query($conn,$query5) or die('Error, delete query5 failed');
                             }
                             ////////////////////////////////////////////////////////////////////
                             // Editant per primera vegada o reeditant, entrem les dades noves //
@@ -620,7 +620,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                                 if ($num[$i] != "" AND $num[$i] != 0) {
                                     $query4 = "INSERT INTO `comanda_linia` ( `numero` , `ref`, `quantitat` )
                                     VALUES ('$numcmda', '$pref[$i]', '$num[$i]')";
-                                    mysql_query($query4) or die('Error, insert query failed');
+                                    mysqli_query($conn,$query4) or die('Error, insert query failed');
                                 }
                             }
                         }
@@ -630,8 +630,8 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                         FROM comanda_linia AS cl, productes AS pr
                         WHERE numero='$numcmda' AND cl.ref=pr.ref
                         ORDER BY pr.categoria,pr.proveidora,pr.nom";
-                        $result5 = mysql_query($sel5) or die(mysql_error());
-                        while (list ($clref, $nomprod, $nomprod2, $quantitat, $unitat, $preu, $iva, $marge, $descompte) = mysql_fetch_row($result5)) {
+                        $result5 = mysqli_query($conn,$sel5) or die(mysqli_error($conn));
+                        while (list ($clref, $nomprod, $nomprod2, $quantitat, $unitat, $preu, $iva, $marge, $descompte) = mysqli_fetch_row($result5)) {
                             $pvp = $preu * (1 + $marge) * (1 + $iva);
                             $pvp = sprintf("%01.2f", $pvp);
                             $qdec = sprintf("%01.2f", $quantitat);

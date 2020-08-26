@@ -10,14 +10,14 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
     $pprov = $_POST['prov'];
     $pdatas = $_POST['datas'];
     $pdatai = $_POST['datai'];
-    
+
     include 'config/configuracio.php';
     ?>
 
     <html lang="es">
     <head>
         <?php include 'head.php'; ?>
-        <title>aplicoop - estadísticas de consumo</title>        
+        <title>aplicoop - estadísticas de consumo</title>
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all" href="calendar/calendar-win2k-1.css" title="win2k-1"/>
 
@@ -38,7 +38,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 <?php include 'menu.php'; ?>
 <div class="page">
     <div class="container">
-    
+
     <h1>Estadísticas de consumo</h1>
 
         <form action="estat_consum.php" method="post" name="prod" id="prod">
@@ -53,11 +53,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                                 <?php
                                 $select2 = "SELECT tipus FROM categoria ORDER BY tipus";
-                                $query2 = mysql_query($select2);
+                                $query2 = mysqli_query($conn,$select2);
                                 if (!$query2) {
-                                    die('Invalid query2: ' . mysql_error());
+                                    die('Invalid query2: ' . mysqli_error($conn));
                                 }
-                                while (list($scat) = mysql_fetch_row($query2)) {
+                                while (list($scat) = mysqli_fetch_row($query2)) {
                                     if ($pcat == $scat) {
                                         echo '<option value="' . $scat . '" selected>' . $scat . '</option>';
                                     } else {
@@ -78,11 +78,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 
                                 <?php
                                 $select3 = "SELECT nom FROM proveidores ORDER BY nom";
-                                $query3 = mysql_query($select3);
+                                $query3 = mysqli_query($conn,$select3);
                                 if (!$query3) {
-                                    die('Invalid query3: ' . mysql_error());
+                                    die('Invalid query3: ' . mysqli_error($conn));
                                 }
-                                while (list($sprov) = mysql_fetch_row($query3)) {
+                                while (list($sprov) = mysqli_fetch_row($query3)) {
                                     if ($pprov == $sprov) {
                                         echo '<option value="' . $sprov . '" selected>' . $sprov . '</option>';
                                     } else {
@@ -109,7 +109,7 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                     </div>
                 </div>
              </div>
-        </form> 
+        </form>
 
     <div class="box">
 
@@ -168,25 +168,25 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                         <tr >
                             <td width="30%" class="u-text-semibold">Producto</td>
                             <td width="10%" class="u-text-semibold">Proveedor</td>
-                            <td width="10%" class="u-text-semibold">Categoría</td>                            
+                            <td width="10%" class="u-text-semibold">Categoría</td>
                             <td width="5%" class="u-text-semibold u-text-right">Consumo</td>
                             <td width="5%" class="u-text-semibold u-text-right">Gasto</td>
                             <td width="20%" class="u-text-semibold u-text-right">Inferior a</td>
                             <td width="20%" class="u-text-semibold u-text-right">Superior a</td>
-                        </tr>') ;     
+                        </tr>') ;
 
         $sel = "SELECT cl.ref, pr.nom, pr.proveidora, pr.unitat, pr.categoria, pr.subcategoria,
 				SUM(cl.cistella), SUM(cl.preu*cl.cistella), MIN(c.data), MAX(c.data)
 			FROM comanda AS c, comanda_linia AS cl, productes AS pr
 			WHERE c.numero=cl.numero AND pr.ref=cl.ref " . $where . "
 			GROUP BY cl.ref";
-        $result = mysql_query($sel);
+        $result = mysqli_query($conn,$sel);
         if (!$result) {
-            die('Invalid query: ' . mysql_error());
+            die('Invalid query: ' . mysqli_error($conn));
         }
 
         $k = 0;
-        while (list($ref, $nomprod, $nomprov, $unitat, $cat, $subcat, $consum, $despesa, $datamin, $datamax) = mysql_fetch_row($result)) {
+        while (list($ref, $nomprod, $nomprov, $unitat, $cat, $subcat, $consum, $despesa, $datamin, $datamax) = mysqli_fetch_row($result)) {
             $datas3 = explode("-", $datamax);
             $datai3 = explode("-", $datamin);
             $datamaxvis = $datas3[2] . "-" . $datas3[1] . "-" . $datas3[0];

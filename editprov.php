@@ -39,15 +39,15 @@ include 'config/configuracio.php';
 		<link rel="stylesheet" type="text/css" href="coope.css" />
 		<title>editar proveidora ::: la coope</title>
 	</head>
-	
+
 <body>
 	<?php include 'menu.php'; ?>
 <div class="pagina" style="margin-top: 10px;">
 <div class="contenidor_1" style="border: 1px solid #990000;">
 
-<p class='path'> 
+<p class='path'>
 ><a href='admint.php'>administració</a>
- >><a href='proveidores.php'>editar, crear, eliminar proveïdores</a> 
+ >><a href='proveidores.php'>editar, crear, eliminar proveïdores</a>
 >>><a href='editprov.php?id=<?php echo $nompre; ?>'>editar proveïdora <?php echo $nompre; ?></a>
 </p>
 <p class="h1" style="background: #990000; text-align: left; padding-left: 20px;">
@@ -58,25 +58,25 @@ Editar proveïdora <?php echo $nompre; ?></p>
 if ($elim!="")
 {
 	$query = "SELECT nom,proveidora FROM productes WHERE proveidora='$nompre'";
-	$result=mysql_query($query);
+	$result=mysqli_query($conn,$query);
 	if (!$result) {die("Query to show fields from query failed");}
-	$check=mysql_numrows($result);
-	if ($check != 0) 
+	$check=mysqli_num_rows($result);
+	if ($check != 0)
 	{
-		echo "<p class='comment'>Les dades de l'empresa o persona proveïdora ".$supernompre." no 
+		echo "<p class='comment'>Les dades de l'empresa o persona proveïdora ".$supernompre." no
 		poden borrar-se perquè tenen encara productes associats. Hauries d'eliminar el productes associats
 		en primer terme. Si no pots, recorda que pots desactivar aquesta proveïdora.</p>";
 		echo "<p class='comment'>Productes associats</p>";
-		while (list($nom,$proveidora)=mysql_fetch_row($result))
+		while (list($nom,$proveidora)=mysqli_fetch_row($result))
 		{
 			echo "<p class='cos2'>".$nom."-".$proveidora."</p>";
-		}		
+		}
 		die;
 	}
 	else
 	{
 		$query2="DELETE FROM proveidores WHERE nom='$nompre'";
-		mysql_query($query2) or die("Error, no s'han pogut borrar les dades");
+		mysqli_query($conn,$query2) or die("Error, no s'han pogut borrar les dades");
 
   		die ("<p class='comment'>S'han eliminat les dades de l'empresa o persona proveïdora ".$supernompre."
    	</p>");
@@ -91,9 +91,9 @@ if ($pnom != "")
 		web='".$pweb."',email1='".$pemail1."',email2='".$pemail2."',notes='".$pnotes."'
 	   WHERE nom='".$pnom."'";
 
-		mysql_query($query2) or die('Error, insert query2 failed');
-	
-		echo "<p class='comment'>Les dades de l'empresa o persona proveïdora ".$psupernom." 
+		mysqli_query($conn,$query2) or die('Error, insert query2 failed');
+
+		echo "<p class='comment'>Les dades de l'empresa o persona proveïdora ".$psupernom."
 		s'han guardat satisfactòriament</p>";
 		echo "<p class='cos2'>Nom:".$pnom."</p>";
 		echo "<p class='cos2'>Actiu:".$pactiu."</p>";
@@ -111,10 +111,10 @@ if ($pnom != "")
 else
 {
 	$select= "SELECT * FROM proveidores WHERE nom='$nompre'";
-	$query=mysql_query($select);
-	if (!$query) {    die('Invalid query: ' . mysql_error());    }
-    
-	list($nom,$actiu,$nomcomplert,$contacte,$adress,$telf1,$telf2,$fax,$web,$email1,$email2,$notes)=mysql_fetch_row($query);
+	$query=mysqli_query($conn,$select);
+	if (!$query) {    die('Invalid query: ' . mysqli_error($conn));    }
+
+	list($nom,$actiu,$nomcomplert,$contacte,$adress,$telf1,$telf2,$fax,$web,$email1,$email2,$notes)=mysqli_fetch_row($query);
 
 	if ($actiu=='activat'){ $checked1='checked'; $checked2='';}
 	else { $checked1=''; $checked2='checked';}
@@ -146,7 +146,7 @@ no<input type="radio" name="actiu" value="desactivat" id="actiu" <?php echo $che
 
 <p class="linia_button2" style="background: #990000; text-align: center; vertical-align: middle;">
 <input class="button2" name="acceptar" type="submit" id="acceptar" value="Acceptar">
-<input class="button2" name="eliminar" type="button" id="eliminar" value="Eliminar" 
+<input class="button2" name="eliminar" type="button" id="eliminar" value="Eliminar"
      onClick="var answer = confirm ('Estas segur de borrar aquesta proveïdora!!')
 				if (answer)
 					{window.location='editprov.php?id=<?php echo $nompre; ?>&id2=elim'}">
@@ -160,8 +160,8 @@ no<input type="radio" name="actiu" value="desactivat" id="actiu" <?php echo $che
 }
 include 'config/disconect.php';
 
-} 
+}
 else {
-header("Location: index.php"); 
+header("Location: index.php");
 }
 ?>

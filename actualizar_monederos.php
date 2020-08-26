@@ -25,8 +25,8 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
     include 'config/configuracio.php';
 
     $sel = "SELECT tipus FROM usuaris WHERE nom='$user'";
-    $query = mysql_query($sel) or die ('query failed: ' . mysql_error());
-    list($priv) = mysql_fetch_row($query);
+    $query = mysqli_query($conn,$sel) or die ('query failed: ' . mysqli_error($conn));
+    list($priv) = mysqli_fetch_row($query);
 
 ///sólo entramos si somos "super"////
 
@@ -54,8 +54,8 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
         //Check that this is the first time
             $concepto = "Ordainketa (dom.) ".$pmes.'/'.$pyear;
             $query_check = "SELECT familia FROM moneder WHERE concepte = '$concepto'";
-            $result = mysql_query($query_check);
-            if (mysql_num_rows($result)==0) {
+            $result = mysqli_query($conn,$query_check);
+            if (mysqli_num_rows($result)==0) {
                echo "<p>Acutalizacion de monederos con consumos y cuotas liquidados por domiciliación bancária del més " . $pmes . "/" . $pyear ."</p>";
 	        //Ordainketak
                $concepto = "Ordainketa (dom.) ".$pmes.'/'.$pyear;
@@ -65,18 +65,18 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                JOIN usuaris ON moneder.familia = usuaris.nom
                WHERE year(data) = " . $pyear . " and month(data) = " . $pmes . " and (concepte LIKE 'Factura%' OR concepte LIKE 'Anulacio%') AND usuaris.domiciliacion=1
                GROUP BY familia";
-               $result = mysql_query($query);
+               $result = mysqli_query($conn,$query);
                if (!$result) {
-                   die('Invalid query: ' . mysql_error());
+                   die('Invalid query: ' . mysqli_error($conn));
                }
-               while (list($socio,$consumo,$kuota,$total) = mysql_fetch_row($result)) {
+               while (list($socio,$consumo,$kuota,$total) = mysqli_fetch_row($result)) {
                   // $consumo = sprintf("%01.2f", $consumo);
                   // $total = $consumo + $kuota;
                   echo $socio . " " . $consumo . " + " . $kuota . " = " . $total . "<br>";
 
                   $query2 = "INSERT INTO moneder
                   VALUES ('" . $session . "','" . $user . "','" . $data . "','" . $socio . "','" . $concepto . "','" . $total . "','" . $notas . "')";
-                  mysql_query($query2) or die('Error, insert query2 failed');
+                  mysqli_query($conn,$query2) or die('Error, insert query2 failed');
               }
 
               $query="SELECT usuaris.nom, IF(year(usuaris.fechaalta)=" . $pyear . " AND month((usuaris.fechaalta))=" . $pmes . ",'20.00',usuaris.kuota)
@@ -85,18 +85,18 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 SELECT DISTINCT us.nom
                 FROM usuaris AS us
                 JOIN comanda ON us.nom=comanda.usuari
-                WHERE year(comanda.data2) = " . $pyear . " AND MONTH(comanda.data2) = " . $pmes . "
+                WHERE year(comanda.data) = " . $pyear . " AND MONTH(comanda.data) = " . $pmes . "
             )  AND usuaris.tipus2 = 'actiu' AND usuaris.domiciliacion = 1 AND usuaris.fechaalta <='" . $fecha1 . "'";
-            $result = mysql_query($query);
+            $result = mysqli_query($conn,$query);
             if (!$result) {
-            	die('Invalid query: ' . mysql_error());
+            	die('Invalid query: ' . mysqli_error($conn));
             }
 
-            while (list($socio, $kuota) = mysql_fetch_row($result)) {
+            while (list($socio, $kuota) = mysqli_fetch_row($result)) {
             	echo $socio . " " . $kuota . "<br>";
             	$query2 = "INSERT INTO moneder
                VALUES ('" . $session . "','" . $user . "','" . $data . "','" . $socio . "','" . $concepto . "','" . $kuota . "','" . $notas . "')";
-               mysql_query($query2) or die('Error, insert query2 failed');
+               mysqli_query($conn,$query2) or die('Error, insert query2 failed');
            }
        }
        else {

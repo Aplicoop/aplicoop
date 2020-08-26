@@ -69,11 +69,11 @@ if ($_SESSION['image_is_logged_in']) {
 					FROM usuaris
 					WHERE tipus='admin' AND tipus2='actiu'
 					ORDER BY nom";
-                    $result = mysql_query($taula);
+                    $result = mysqli_query($conn,$taula);
                     if (!$result) {
-                        die('Invalid query: ' . mysql_error());
+                        die('Invalid query: ' . mysqli_error($conn));
                     }
-                    while (list($r) = mysql_fetch_row($result)) {
+                    while (list($r) = mysqli_fetch_row($result)) {
                         $noms[] = $r;
                     }
                 } elseif ($desti[$i] == "eco") {
@@ -81,11 +81,11 @@ if ($_SESSION['image_is_logged_in']) {
 					FROM usuaris
 					WHERE tipus='eco' AND tipus2='actiu'
 					ORDER BY nom";
-                    $result2 = mysql_query($taula2);
+                    $result2 = mysqli_query($conn,$taula2);
                     if (!$result2) {
-                        die('Invalid query2: ' . mysql_error());
+                        die('Invalid query2: ' . mysqli_error($conn));
                     }
-                    while (list($r2) = mysql_fetch_row($result2)) {
+                    while (list($r2) = mysqli_fetch_row($result2)) {
                         $noms2[] = $r2;
                     }
                 } elseif ($desti[$i] == "prov") {
@@ -93,11 +93,11 @@ if ($_SESSION['image_is_logged_in']) {
 					FROM usuaris
 					WHERE tipus='prov' AND tipus2='actiu'
 					ORDER BY nom";
-                    $result3 = mysql_query($taula3);
+                    $result3 = mysqli_query($conn,$taula3);
                     if (!$result3) {
-                        die('Invalid query3: ' . mysql_error());
+                        die('Invalid query3: ' . mysqli_error($conn));
                     }
-                    while (list($r3) = mysql_fetch_row($result3)) {
+                    while (list($r3) = mysqli_fetch_row($result3)) {
                         $noms3[] = $r3;
                     }
                 } else {
@@ -129,11 +129,11 @@ if ($_SESSION['image_is_logged_in']) {
 
         $taula5 = "SELECT nom, email1, email2
 		  FROM usuaris " . $where . " ORDER BY nom";
-        $result5 = mysql_query($taula5);
+        $result5 = mysqli_query($conn,$taula5);
         if (!$result5) {
-            die('Invalid query5: ' . mysql_error());
+            die('Invalid query5: ' . mysqli_error($conn));
         }
-        while (list($familia, $email1, $email2) = mysql_fetch_row($result5)) {
+        while (list($familia, $email1, $email2) = mysqli_fetch_row($result5)) {
             $destinatari .= $email1 . ',' . $email2 . ',';
         }
 
@@ -142,20 +142,20 @@ if ($_SESSION['image_is_logged_in']) {
         $text = $_POST['text'];
         $taula9 = "SELECT email1, email2
 		  FROM usuaris WHERE nom='$user' ";
-        $result9 = mysql_query($taula9);
+        $result9 = mysqli_query($conn,$taula9);
         if (!$result9) {
-            die('Invalid query9: ' . mysql_error());
+            die('Invalid query9: ' . mysqli_error($conn));
         }
-        list($email1, $email2) = mysql_fetch_row($result9);
+        list($email1, $email2) = mysqli_fetch_row($result9);
         $reply = $email1 . "," . $email2;
         ae_send_mail($user, $destinatari, $subject, $text, array('X-Mailer' => 'PHP script at ' . $_SERVER['HTTP_HOST']), $reply);
         $mail_send = true;
 
         $data_c = date("Y-m-d-H-i-s");
         $taula6 = "INSERT INTO incidencia VALUES('$user', '$noms_desti', '$subject', '$text', '$data_c', '0')";
-        $result6 = mysql_query($taula6);
+        $result6 = mysqli_query($conn,$taula6);
         if (!$result6) {
-            die('Invalid query6: ' . mysql_error());
+            die('Invalid query6: ' . mysqli_error($conn));
         }
     }
     ?>
@@ -270,11 +270,11 @@ if ($_SESSION['image_is_logged_in']) {
                                             $taula7 = "SELECT nom FROM usuaris WHERE tipus2='actiu' ORDER BY nom";
                                         }
 
-                                        $result7 = mysql_query($taula7);
+                                        $result7 = mysqli_query($conn,$taula7);
                                         if (!$result7) {
-                                            die('Invalid query7: ' . mysql_error());
+                                            die('Invalid query7: ' . mysqli_error($conn));
                                         }
-                                        while (list($familia) = mysql_fetch_row($result7)) {
+                                        while (list($familia) = mysqli_fetch_row($result7)) {
                                             echo '<option value="' . $familia . '">' . $familia . '</option>';
                                         }
                                         ?>

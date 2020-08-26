@@ -114,10 +114,10 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
             $errorMessage = "Has de introducir la clave";
         } else {
             $sql = "SELECT codi FROM cistella_check
-			WHERE codi = '$pcodi' 
+			WHERE codi = '$pcodi'
 			AND proces='$pproces' AND grup='$pgrup' AND data ='$pbd_data'";
-            $result = mysql_query($sql) or die('Query failed. ' . mysql_error());
-            if (mysql_num_rows($result) == 1) {
+            $result = mysqli_query($conn,$sql) or die('Query failed. ' . mysqli_error($conn));
+            if (mysqli_num_rows($result) == 1) {
                 $_SESSION['codi_cistella'] = 'in';
                 ?>
 
@@ -174,8 +174,8 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                 {
                     $sql = "SELECT check1 FROM cistella_check
 		WHERE proces='$gproces' AND grup='$ggrup' AND data ='$gbd_data'";
-                    $result = mysql_query($sql) or die('Query failed. ' . mysql_error());
-                    list($check) = mysql_fetch_row($result);
+                    $result = mysqli_query($conn,$sql) or die('Query failed. ' . mysqli_error($conn));
+                    list($check) = mysqli_fetch_row($result);
 
 //////////////////////////////////////////////////////////////////////////////////
 // si el proces te check1=1 (ja s'han fet les cistelles) llavors demana el codi //
@@ -242,11 +242,11 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 		FROM comanda
 		GROUP BY proces, grup, data
 		ORDER BY data DESC";
-                $result = mysql_query($taula);
+                $result = mysqli_query($conn,$taula);
                 if (!$result) {
-                    die('Invalid query: ' . mysql_error());
+                    die('Invalid query: ' . mysqli_error($conn));
                 }
-                $rnum = mysql_num_rows($result);
+                $rnum = mysqli_num_rows($result);
 
                 if (!$gcont) {
                     $cont = 20;
@@ -259,19 +259,19 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
 		GROUP BY proces, grup, data
 		ORDER BY data DESC
 		LIMIT " . $cont;
-                $result2 = mysql_query($taula2);
+                $result2 = mysqli_query($conn,$taula2);
                 if (!$result2) {
-                    die('Invalid query2: ' . mysql_error());
+                    die('Invalid query2: ' . mysqli_error($conn));
                 }
 
-                while (list($proces, $grup, $bd_data) = mysql_fetch_row($result2)) {
+                while (list($proces, $grup, $bd_data) = mysqli_fetch_row($result2)) {
                     //$eco_column="";
                     //if ($user=="economia")
                     //{
                     //	$taula2 = "SELECT codi FROM cistella_check WHERE data='$periode'";
-                    //	$result2 = mysql_query($taula2);
-                    //	if (!$result2) {die('Invalid query2: ' . mysql_error());}
-                    //	list($eco_codi)=mysql_fetch_row($result2);
+                    //	$result2 = mysqli_query($conn,$taula2);
+                    //	if (!$result2) {die('Invalid query2: ' . mysqli_error($conn));}
+                    //	list($eco_codi)=mysqli_fetch_row($result2);
                     //	$eco_column="<td align='center' class='Estilo1'>".$eco_codi."</td>";
                     //	}
 
@@ -292,12 +292,12 @@ if ($_SESSION['image_is_logged_in'] == 'true') {
                         $taula3 = "SELECT check1
 			FROM cistella_check
 			WHERE proces='$proces' AND grup='$grup' AND data='$bd_data'";
-                        $result3 = mysql_query($taula3);
+                        $result3 = mysqli_query($conn,$taula3);
                         if (!$result3) {
-                            die('Invalid query3: ' . mysql_error());
+                            die('Invalid query3: ' . mysqli_error($conn));
                         }
 
-                        list($check) = mysql_fetch_row($result3);
+                        list($check) = mysqli_fetch_row($result3);
                         if ($check == 1) {
                             $vis_cist = "<a href='cistelles.php?id2=" . $data . "&id3=" . $proces . "&id4=" . $grup . "&id5=0'  class=\"link\">VC</a>";
                         } else {
